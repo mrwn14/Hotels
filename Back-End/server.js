@@ -11,34 +11,16 @@ const pool = require("./db");
 // res = response
 // app.(http request) to send any http request to the url in the first parameter of the function  
 app.get('/',(req, res) => {
-    console.log('hello');
-    //you can send a status code, 500 = internal server error
-    //you can chain a status code with a message, can be a string or just json
-    res.sendStatus(500).send("helo");
-    //lets you download the server.js or whichever path you're sending there
-    res,download("server.js")
-
-    //to send json you do
-    res.json('')
-
-    //to send an html
-    res.render('')
     res.send('Hi')
 })
 
 
-// ROUTES
+// // ROUTES
 app.get('/Hotels', async (req, res) => {
     pool.connect();
     try {
-        const hamid = await pool.query("SELECT * FROM HotelChain", (err, res) => {
-            if (!err) {
-                console.log(res.rows);
-            }
-            else {
-                console.log(err.message);
-            }
-        })
+        const hamid = await pool.query("SELECT * FROM HotelChain");
+        res.json(hamid.rows);
     }
     catch (err) {
         console.log(err);
@@ -48,5 +30,7 @@ app.get('/Hotels', async (req, res) => {
     }
 
 })
-//get 
-app.listen(3005);
+// //get 
+app.listen(4000, () => {
+    console.log('Server is running on port 4000');
+});

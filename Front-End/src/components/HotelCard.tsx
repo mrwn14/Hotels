@@ -1,6 +1,6 @@
 import { Container, Grid } from "@mui/material";
 
-export const HotelCard = ({ hotelChain, price, location }) => {
+export const HotelCard = () => {
     return (
         <div className="max-w-[18rem] mx-3 my-3 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
             <a href="#">
@@ -25,10 +25,10 @@ export const HotelCard = ({ hotelChain, price, location }) => {
                         <Grid item xs={6}>
                         📍 New York
                         </Grid>
-                        <Grid item xs={4.5}>
+                        <Grid item xs={4}>
                         💲 300
                         </Grid>
-                        <Grid item xs={1.5}>
+                        <Grid item xs={2}>
                         ⭐ 5
                         </Grid>
                     </Grid>

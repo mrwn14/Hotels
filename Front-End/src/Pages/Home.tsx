@@ -1,5 +1,4 @@
 import { NavBar } from "../components/NavBar";
-import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -60,12 +59,19 @@ export const Home = () => {
 
     const handleClick = () => {
        fetch("http://localhost:4000/Hotels").then(
-         response => {
-            return response.json();
-         }
-       ). then(data => {
-        console.log(data);
-       })
+         response => { return response.json();}).then(
+                data => { console.log(data);})
+    //     fetch('http://localhost:4000/Hotels/Booking', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //         },
+    //     }).then(response => {return response.json();}).then(
+    //         data => {
+    //             console.log(data);
+    //         }
+    //     )
     }
     return (
         <>

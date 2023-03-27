@@ -4,12 +4,16 @@
 //This is the file where we put our code for the api.
 //To run this file, run the following command (found in the package.json) ` npm run devStart `
 const express = require('express');
+var cors = require('cors')
 const app = express();
 const pool = require("./db");
 
 // req = request
 // res = response
 // app.(http request) to send any http request to the url in the first parameter of the function  
+app.use(cors())
+
+
 app.get('/',(req, res) => {
     res.send('Hi')
 })
@@ -24,9 +28,6 @@ app.get('/Hotels', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-    }
-    finally {
-        pool.end();
     }
 
 })

@@ -121,7 +121,6 @@ DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel
 
 /*
 SQL INSERTS
-you sharing a port??
 
 5) Insert in your database data for each one of the 5 hotel chains. Each one of them has at
 least 8 hotels, which belong to at least 3 categories. Two of the hotels at least should be in the
@@ -133,7 +132,7 @@ INSERT INTO HotelChain VALUES
     ('00001','Marriott', '456 Main Ave, Portland, USA 97209', 8, 'contact@marriot.com', '5409823547'),
     ('00002','Hilton', '16 Hawk Lane, Chicago, USA, 39427', 8, 'hello@hilton.com', '6236306193'),
     ('00003','Fairmont', '173 Romane St, New York, USA, 92649', 8, 'fairmont@contact.com', '3432003847'),
-    ('00004','Pleasant Galaxy Motel', '73 Fairy St, Miami, USA 33130', 8, 'galaxy@fly.com', '3045849385'),
+    ('00004','Galaxy', '73 Fairy St, Miami, USA 33130', 8, 'galaxy@fly.com', '3045849385'),
     ('00005', 'Refresh Resort', '1 Heavenly St, Charleston, USA 29403', 8, 'contact@refresh.com', '3045849385');
 
 /*
@@ -175,6 +174,7 @@ INSERT INTO Hotel VALUES
     ('14006', '00004', 4, 100, '20000 Pacific Coast Hwy, Malibu, USA 90265', 'galaxypacificcoast@fly.com', '5556789015'),
     ('14007', '00004', 2, 25, '21000 Topanga Canyon Blvd, Chatsworth, USA 91311', 'galaxytopangacanyon@fly.com', '5557890126'),
     ('14008', '00004', 5, 150, '22000 S Figueroa St, Los Angeles, USA 90007', 'galaxyfigueroa@fly.com', '5558907382'),
+
     ('15001', '00005', 3, 50, '7666 Central Park, New York, USA 10019', 'contactcarson@refresh.com', '5551234571'),
     ('15002', '00005', 4, 100, '24000 Imperial Hwy, Downey, USA 90242', 'contactimperial@refresh.com', '5552345682'),
     ('15003', '00005', 2, 25, '25000 San Fernando Rd, Santa Clarita, USA 91321', 'contactsanfernando@refresh.com', '5553456793'),

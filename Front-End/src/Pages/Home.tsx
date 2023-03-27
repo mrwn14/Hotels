@@ -58,24 +58,25 @@ export const Home = () => {
     };
 
     const handleClick = () => {
-       fetch("http://localhost:4000/Hotels").then(
-         response => { return response.json();}).then(
-                data => { console.log(data);})
-    //     fetch('http://localhost:4000/Hotels/Booking', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json'
-    //         },
-    //     }).then(response => {return response.json();}).then(
-    //         data => {
-    //             console.log(data);
-    //         }
-    //     )
+        // console.log("test");
+        
+    //    fetch("http://localhost:4000/Hotels").then(
+    //      response => { return response.json();}).then(
+    //             data => { console.log(data);})
+        fetch('http://localhost:4000/Hotels/Booking', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        }).then(response => {return response.json();}).then(
+            data => {
+                console.log(data);
+            }
+        )
     }
     return (
         <>
-            <NavBar /> 
             <Container maxWidth="lg" className="mt-16">
                 <Grid
                     container

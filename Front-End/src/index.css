@@ -5,3 +5,13 @@
   font-family:  system-ui, Avenir, Helvetica, Arial, sans-serif;
   background-color: #FFFFFF;
 }
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    outline: none;
+    border:transparent;
+  }
+}

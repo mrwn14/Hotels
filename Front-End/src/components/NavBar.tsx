@@ -1,7 +1,7 @@
 import { Navbar, Button } from "flowbite-react";
 export const NavBar = () => {
     return (
-        <Navbar fluid={true} rounded={true} className="bg-slate-100">
+        <Navbar fluid={true} rounded={true}  className=" lg:mx-24 md:mx-12 sm:mx-4 max-w-6xl xl:mx-auto">
             <Navbar.Brand href="">
                 <img
                     src="/src/media/logo.svg"

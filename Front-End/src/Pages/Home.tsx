@@ -22,7 +22,7 @@ import { Room } from "../DTO/dtos";
 import { HotelCard } from "../components/HotelCard";
 
 export const Home = () => {
-    const [checkInValue, setCheckInValue] = useState<Dayjs | null>();
+    const [checkInValue, setCheckInValue] = useState<Dayjs | null>(dayjs());
     const [checkOutValue, setCheckOutValue] = useState<Dayjs | null>();
     const [capacity, setCapacity] = useState<Number>();
     const [rating, setRating] = useState<Number>();
@@ -36,9 +36,7 @@ export const Home = () => {
     if (checkInValue != null) {
         let temp = checkInValue;
         minCheckOutDate = temp.add(1, "day");
-        if (minCheckOutDate.isAfter(checkOutValue)) {
-            setCheckOutValue(minCheckOutDate);
-        }
+
     }
 
     const handleCapacityChange = (event: SelectChangeEvent) => {
@@ -58,18 +56,65 @@ export const Home = () => {
     };
 
     const handleClick = () => {
-        // console.log("test");
-        
-    //    fetch("http://localhost:4000/Hotels").then(
-    //      response => { return response.json();}).then(
-    //             data => { console.log(data);})
-        fetch('http://localhost:4000/Hotels/Booking', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-            },
-        }).then(response => {return response.json();}).then(
+        let newCheckIn, newCheckOut, newCapacity, newRating, newCity, newHotelChain, newPrice;
+        // newCheckIn = ((checkInValue===undefined||checkInValue===null)? "undefined" : checkInValue.format("YYYY-MM-DD"));
+        if (checkInValue === undefined || checkInValue == null) {
+            newCheckIn = "undefined"; 
+        } else newCheckIn = checkInValue.format("YYYY-MM-DD");
+        if (checkOutValue === undefined || checkOutValue == null) {
+            newCheckOut = "undefined";
+        } else newCheckOut = checkOutValue.format("YYYY-MM-DD");
+        if (capacity == undefined || capacity == null) {
+            newCapacity = "undefined";
+        } else newCapacity = capacity.toString();
+        if (rating == undefined || rating == null) {
+            newRating = "undefined";
+        } else newRating = rating.toString();
+        if (city == undefined   || city == null) {
+            newCity = "undefined";
+        } else newCity = city;
+        if (hotelChain == undefined || hotelChain == null) {
+            newHotelChain = "undefined";
+        } else{
+            switch (hotelChain) {
+                case "Mariott":
+                    newHotelChain = "11";
+                    break;
+                case "Hilton":
+                    newHotelChain = "12";
+                    break;
+                case "Fairmont":
+                    newHotelChain = "13";
+                    break;
+                case "Galaxy":
+                    newHotelChain = "14";
+                    break;
+                case "Refresh Resort":
+                    newHotelChain = "15";
+                    break;
+                default:
+                    newHotelChain = "impossible";
+                    break;
+            }
+        } 
+        if (price == undefined || price == null) {
+            newPrice = "undefined";
+        } else newPrice = price;
+
+        let data = {
+            "checkIn": newCheckIn,
+            "checkOut": newCheckOut,
+            "capacity": newCapacity,
+            "rating": newRating,
+            "city": newCity,
+            "hotelChain": newHotelChain,
+            "price": newPrice
+        }
+        console.log(data);
+        let url = new URL('http://localhost:4000/Hotels')
+        Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
+
+        fetch(url).then(response => {return response.json();}).then(
             data => {
                 console.log(data);
             }
@@ -232,6 +277,7 @@ export const Home = () => {
                                         label="rating"
                                         onChange={handleRatingChange}
                                     >
+                                        <MenuItem value={"null"}></MenuItem>
                                         <MenuItem value={1}>1</MenuItem>
                                         <MenuItem value={2}>2</MenuItem>
                                         <MenuItem value={3}>3</MenuItem>

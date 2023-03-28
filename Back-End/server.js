@@ -4,9 +4,14 @@
 //This is the file where we put our code for the api.
 //To run this file, run the following command (found in the package.json) ` npm run devStart `
 const express = require('express');
-const app = express();
 const cors = require('cors');
 const pool = require("./db");
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 app.use(cors())
 
@@ -22,8 +27,18 @@ app.get('/',(req, res) => {
 app.get('/Hotels', async (req, res) => {
     pool.connect();
     try {
+        query = "SELECT * FROM room WHERE "
+        params = req.query;
+        query += "roomID NOT IN (SELECT room.roomID FROM room LEFT JOIN booking ON room.RoomID = booking.RoomID WHERE (\'"+ params["checkIn"] +"\' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" 
+        + (params["checkOut"]!="undefined"? " AND '"+ params["checkOut"] + "' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" : ")")
+        + (params["capacity"]!="undefined"? " AND room.capacity = "+params["capacity"] : "")
+        + (params["rating"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.category = "+params["rating"]+")":"")
+        + (params["price"]!="undefined"? " AND room.price <= " + params["price"] : "")
+        + (params["city"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.address LIKE '%"+params["city"]+"%')":"")
+        + (params["hotelChain"]!="undefined"? " AND room.hotelID LIKE '" + params["hotelChain"] +"%'": "")
+        
         let x = 'SELECT * FROM HotelChain';
-        const send = await pool.query(x);
+        const send = await pool.query(query +";");
         res.json(send.rows);
     }
     catch (err) {
@@ -32,17 +47,12 @@ app.get('/Hotels', async (req, res) => {
 
 })
 
+//to be filled later
 app.post('/Hotels/Booking', async (req, res) => {
-    //INSERT INTO Booking VALUES (00001, 11001, 20003, 00001, '2023-03-27', '2023-05-21', '2023-05-25')
-    pool.connect();
-    try{
-        let command = "INSERT INTO Booking VALUES (00003, 11001, 20005, 00001, '2023-03-27', '2023-05-21', '2023-05-25')";
-        const send = await pool.query(command);
-        res.send("We gucci");
-    }
-    catch(err){
-        console.log(err);
-    }
+    let x = "SELECT * FROM room, booking";
+    let query = "SELECT";
+
+    console.log(req.body);
 })
 
 // //get 

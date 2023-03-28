@@ -29,7 +29,7 @@ export const cities: string[] = [
 export const hotelChains: string[] = [
     "Mariott",
     "Hilton",
-    "Fiarmont",
+    "Fairmont",
     "Galaxy",
     "Refresh Resort"
 ]

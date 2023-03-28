@@ -1,6 +1,12 @@
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
-export const HotelCard = () => {
+export const HotelCard = ({extendable, damages, mountain, sea, city, hotelChain, rating, price}) => {
+    const isTrue = (variable: boolean) => {    
+        let render = variable? "✔️" : "❌";
+        return render;
+    }
+
     return (
         <div className="max-w-[18rem] mx-3 my-3 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
             <a href="#">
@@ -13,7 +19,7 @@ export const HotelCard = () => {
             <div className="p-5">
                 <a href="#">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        Hilton
+                        {hotelChain}
                     </h5>
                 </a>
                     <Grid
@@ -23,13 +29,13 @@ export const HotelCard = () => {
                     className="mb-2"
                     >
                         <Grid item xs={6}>
-                        📍 New York
+                        📍 {city}
                         </Grid>
                         <Grid item xs={4}>
-                        💲 300
+                        💲 {price}$
                         </Grid>
                         <Grid item xs={2}>
-                        ⭐ 5
+                        ⭐ {rating}
                         </Grid>
                     </Grid>
                     <Grid
@@ -38,16 +44,20 @@ export const HotelCard = () => {
                     alignItems="stretch"
                     >
                         <Grid item xs={4.5}>
-                        Extendable
+                            extendable
                         </Grid>
                         <Grid item xs={2}>
-                        ✔️
+                        {
+                           isTrue(extendable)
+                        }
                         </Grid>
                         <Grid item xs={4.5}>
-                        Damages
+                       damages
                         </Grid>
                         <Grid item xs={1}>
-                        ❌
+                        {
+                            isTrue(damages)
+                        }
                         </Grid>
                     </Grid>
                     <Grid
@@ -59,18 +69,25 @@ export const HotelCard = () => {
                         Mountain
                         </Grid>
                         <Grid item xs={2}>
-                        ✔️
+                        {
+                            isTrue(mountain)
+                        }
                         </Grid>
                         <Grid item xs={4.5}>
                         Sea View
                         </Grid>
                         <Grid item xs={1}>
-                        ✔️
+                        {
+                            isTrue(sea)
+                        }
                         </Grid>
                     </Grid>
                 <p className="mb-3 mt-3 font-normal text-gray-700 dark:text-gray-400">
-                    Three Person room in Hilton Hotel's New York location with a rating of 5 stars.
+                    Three Person room in {hotelChain} Hotel's {city} location with a rating of {rating} stars.
                 </p>
+                <Button>
+                    <Link to='/RoomView'></Link>
+                </Button>
                 <a
                     href="#"
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-zinc-800 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

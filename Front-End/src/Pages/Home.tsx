@@ -29,8 +29,9 @@ export const Home = () => {
     const [city, setCity] = useState<string>();
     const [hotelChain, setHotelChain] = useState<string>();
     const [price, setPrice] = useState<string>();
+    const [data, setData] = useState<Room[]>([]);
+    const [done, setDone] = useState<boolean>(false);
 
-    const [data, setData] = useState<Room[]>();
     let minCheckOutDate: Dayjs | null = null;
 
     if (checkInValue != null) {
@@ -55,7 +56,14 @@ export const Home = () => {
         setPrice(event.target.value);
     };
 
-    const handleClick = () => {
+    const getCity = (address: string) =>  {
+        const addressArr = address.split(", ");
+        const city = addressArr[addressArr.length - 2];
+        return city;
+      }
+
+
+    const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined) => {
         let newCheckIn, newCheckOut, newCapacity, newRating, newCity, newHotelChain, newPrice;
         // newCheckIn = ((checkInValue===undefined||checkInValue===null)? "undefined" : checkInValue.format("YYYY-MM-DD"));
         if (checkInValue === undefined || checkInValue == null) {
@@ -77,7 +85,7 @@ export const Home = () => {
             newHotelChain = "undefined";
         } else{
             switch (hotelChain) {
-                case "Mariott":
+                case "Marriott":
                     newHotelChain = "11";
                     break;
                 case "Hilton":
@@ -110,15 +118,54 @@ export const Home = () => {
             "hotelChain": newHotelChain,
             "price": newPrice
         }
-        console.log(data);
+        return data;
+    }
+
+    const handleClick = () => {
+        let data = compileData(checkInValue, checkOutValue, capacity, rating, city, hotelChain, price);
         let url = new URL('http://localhost:4000/Hotels')
         Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
-
         fetch(url).then(response => {return response.json();}).then(
             data => {
-                console.log(data);
+                let rooms:Room[] = []
+                for (const key in data) {
+                    let url = new URL('http://localhost:4000/Hotels/' + data[key]["hotelid"]);
+                    fetch(url).then( response => {return response.json();}).then(
+                        category => {
+                            console.log(category[0])
+                            data[key]["category"] = category[0]["category"]
+                            data[key]["address"] = getCity(category[0]["address"])
+                        }
+                    )
+                    let id = data[key]["hotelid"]
+                    switch (id[1]) {
+                        case "1":
+                            data[key]["chain"] = "Marriott";
+                            break;
+                        case "2":
+                            data[key]["chain"] = "Hilton";
+                            break;
+                        case "3":
+                            data[key]["chain"] = "Fairmont";
+                            break;
+                        case "4":
+                            data[key]["chain"] = "Galaxy";
+                            break;
+                        case "5":
+                            data[key]["chain"] = "Refresh Resort";
+                            break;
+                        default:
+                            data[key]["chain"] = "Marriott";
+                            break;
+                    }
+                    let room:Room = data[key];
+                    rooms.push(room)
+                    console.log(room)
+                }
+                setData(rooms)
             }
         )
+        setDone(true);
     }
     return (
         <>
@@ -277,7 +324,6 @@ export const Home = () => {
                                         label="rating"
                                         onChange={handleRatingChange}
                                     >
-                                        <MenuItem value={"null"}></MenuItem>
                                         <MenuItem value={1}>1</MenuItem>
                                         <MenuItem value={2}>2</MenuItem>
                                         <MenuItem value={3}>3</MenuItem>
@@ -304,20 +350,32 @@ export const Home = () => {
                 </Grid>
             </Container>
             <Container maxWidth="lg" className="mt-10">
-                <Grid
+                {
+                    done? <Grid
                     container
                     direction={"row"}
                     justifyContent="space-evenly"
                     alignItems="stretch"
                 >
-                    <HotelCard />
-                    <HotelCard />
-                    <HotelCard />
-                    <HotelCard />
-                    <HotelCard />
-                    <HotelCard />
-                    <HotelCard />
-                </Grid>
+                    {
+                        data.map(room => (
+                            <HotelCard 
+                            extendable = {room.extendable}
+                            damages = {room.damages}
+                            mountain = {room.mountainview}
+                            sea = {room.seaview}
+                            city = {room.address}
+                            hotelChain = {room.chain}
+                            rating = {room.category}
+                            price = {room.price}
+                            />
+                        ))
+                    }
+                    </Grid>
+                    :
+                    null
+                }
+                
             </Container>
         </>
     );

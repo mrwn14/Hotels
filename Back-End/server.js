@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 
 app.use(cors())
+pool.connect();
 
 // req = request
 // res = response
@@ -25,7 +26,6 @@ app.get('/',(req, res) => {
 
 // // ROUTES
 app.get('/Hotels', async (req, res) => {
-    pool.connect();
     try {
         query = "SELECT * FROM room WHERE "
         params = req.query;
@@ -37,7 +37,6 @@ app.get('/Hotels', async (req, res) => {
         + (params["city"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.address LIKE '%"+params["city"]+"%')":"")
         + (params["hotelChain"]!="undefined"? " AND room.hotelID LIKE '" + params["hotelChain"] +"%'": "")
         
-        let x = 'SELECT * FROM HotelChain';
         const send = await pool.query(query +";");
         res.json(send.rows);
     }
@@ -54,6 +53,18 @@ app.post('/Hotels/Booking', async (req, res) => {
 
     console.log(req.body);
 })
+
+app.get('/Hotels/:id', async (req, res) => {
+    try {
+        query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
+        const send = await pool.query(query +";");
+        res.json(send.rows);
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
 
 // //get 
 app.listen(4000, () => {

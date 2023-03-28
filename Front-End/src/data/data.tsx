@@ -27,7 +27,7 @@ export const cities: string[] = [
     "San Pedro",
 ];
 export const hotelChains: string[] = [
-    "Mariott",
+    "Marriott",
     "Hilton",
     "Fairmont",
     "Galaxy",

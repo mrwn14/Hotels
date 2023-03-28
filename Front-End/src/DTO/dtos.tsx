@@ -2,11 +2,14 @@ export interface Room {
     roomID: string;
     hotelID: string;
     roomNumber: number;
+    hotelName: string;
+    rating: number;
+    city: string;
     price: number;
     amenities: string;
     capacity: number;
-    seaView: boolean;
-    mountainView: boolean;
+    seaview: boolean;
+    mountainview: boolean;
     extendable: boolean;
     damages: boolean;
   }

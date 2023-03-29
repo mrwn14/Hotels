@@ -1,5 +1,6 @@
-//basic learning file to just get myself familiar with express.js
-
+/**
+ * ©️ Tawfiq Abubaker / Marouane Bouzzit - 2023 ©️
+ */
 
 //This is the file where we put our code for the api.
 //To run this file, run the following command (found in the package.json) ` npm run devStart `
@@ -20,14 +21,14 @@ pool.connect();
 // res = response
 // app.(http request) to send any http request to the url in the first parameter of the function  
 app.get('/',(req, res) => {
-    res.send('Hi')
+    res.send('Hotels API running ✔️')
 })
 
 
 // // ROUTES
 app.get('/Hotels', async (req, res) => {
     try {
-        query = "SELECT * FROM room WHERE "
+        query = "SELECT roomid, room.hotelid, roomnumber, price, amenities, capacity, seaview, mountainview, extendable, damages, Address, Category FROM room, hotel WHERE room.HotelID = hotel.HotelID AND "
         params = req.query;
         query += "roomID NOT IN (SELECT room.roomID FROM room LEFT JOIN booking ON room.RoomID = booking.RoomID WHERE (\'"+ params["checkIn"] +"\' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" 
         + (params["checkOut"]!="undefined"? " AND '"+ params["checkOut"] + "' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" : ")")
@@ -47,26 +48,28 @@ app.get('/Hotels', async (req, res) => {
 })
 
 //to be filled later
-app.post('/Hotels/Booking', async (req, res) => {
-    let x = "SELECT * FROM room, booking";
-    let query = "SELECT";
 
-    console.log(req.body);
-})
+// app.post('/Hotels/Booking', async (req, res) => {
+//     let x = "SELECT * FROM room, booking";
+//     let query = "SELECT";
 
-app.get('/Hotels/:id', async (req, res) => {
-    try {
-        query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
-        const send = await pool.query(query +";");
-        res.json(send.rows);
-    }
-    catch (err) {
-        console.log(err);
-    }
-})
+//     console.log(req.body);
+// })
+
+//Kept for future reference 
+
+// app.get('/Hotels/:id', async (req, res) => {
+//     try {
+//         query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
+//         const send = await pool.query(query +";");
+//         res.json(send.rows);
+//     }
+//     catch (err) {
+//         console.log(err);
+//     }
+// })
 
 
-// //get 
 app.listen(4000, () => {
     console.log('Server is running on port 4000');
 });

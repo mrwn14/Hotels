@@ -1,10 +1,11 @@
 export interface Room {
-    roomID: string;
-    hotelID: string;
+    roomid: string;
+    hotelid: string;
     roomNumber: number;
-    hotelName: string;
-    rating: number;
-    city: string;
+    hotelName?: string;
+    category: number;
+    address: string;
+    fullAddress?: string;
     price: number;
     amenities: string;
     capacity: number;

@@ -30,7 +30,6 @@ export const Home = () => {
     const [hotelChain, setHotelChain] = useState<string>();
     const [price, setPrice] = useState<string>();
     const [data, setData] = useState<Room[]>([]);
-    const [done, setDone] = useState<boolean>(false);
 
     let minCheckOutDate: Dayjs | null = null;
 
@@ -56,12 +55,27 @@ export const Home = () => {
         setPrice(event.target.value);
     };
 
-    const getCity = (address: string) =>  {
+    const getCity = (address: string) : string =>  {
         const addressArr = address.split(", ");
         const city = addressArr[addressArr.length - 2];
         return city;
       }
-
+    const getHotelName = (id : string) : string => {
+        switch (id.charAt(1)) {
+            case "1":
+                return "Marriott";
+            case "2":
+                return "Hilton";
+            case "3":
+                return "Fairmont";
+            case "4":
+                return "Galaxy";
+            case "5":
+                return "Refresh Resort";
+            default:
+                return "";
+        }
+    }
 
     const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined) => {
         let newCheckIn, newCheckOut, newCapacity, newRating, newCity, newHotelChain, newPrice;
@@ -120,52 +134,24 @@ export const Home = () => {
         }
         return data;
     }
-
+    //Filter button handler, get request to api which sends back room information, which is filtered then saved under 'data'
     const handleClick = () => {
         let data = compileData(checkInValue, checkOutValue, capacity, rating, city, hotelChain, price);
         let url = new URL('http://localhost:4000/Hotels')
         Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
-        fetch(url).then(response => {return response.json();}).then(
-            data => {
-                let rooms:Room[] = []
-                for (const key in data) {
-                    let url = new URL('http://localhost:4000/Hotels/' + data[key]["hotelid"]);
-                    fetch(url).then( response => {return response.json();}).then(
-                        category => {
-                            console.log(category[0])
-                            data[key]["category"] = category[0]["category"]
-                            data[key]["address"] = getCity(category[0]["address"])
-                        }
-                    )
-                    let id = data[key]["hotelid"]
-                    switch (id[1]) {
-                        case "1":
-                            data[key]["chain"] = "Marriott";
-                            break;
-                        case "2":
-                            data[key]["chain"] = "Hilton";
-                            break;
-                        case "3":
-                            data[key]["chain"] = "Fairmont";
-                            break;
-                        case "4":
-                            data[key]["chain"] = "Galaxy";
-                            break;
-                        case "5":
-                            data[key]["chain"] = "Refresh Resort";
-                            break;
-                        default:
-                            data[key]["chain"] = "Marriott";
-                            break;
-                    }
-                    let room:Room = data[key];
-                    rooms.push(room)
-                    console.log(room)
-                }
-                setData(rooms)
-            }
-        )
-        setDone(true);
+        fetch(url)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data: Room[]) => {
+                data.map((room) => {
+                    room.hotelName = getHotelName(room.hotelid);
+                    room.fullAddress = room.address;
+                    room.address = getCity(room.address);
+                    return room;
+                })
+                setData(data);
+            });
     }
     return (
         <>
@@ -350,8 +336,7 @@ export const Home = () => {
                 </Grid>
             </Container>
             <Container maxWidth="lg" className="mt-10">
-                {
-                    done? <Grid
+                <Grid
                     container
                     direction={"row"}
                     justifyContent="space-evenly"
@@ -364,18 +349,16 @@ export const Home = () => {
                             damages = {room.damages}
                             mountain = {room.mountainview}
                             sea = {room.seaview}
-                            city = {room.address}
-                            hotelChain = {room.chain}
+                            address = {room.address}
+                            hotelChain = {room.hotelName}
+                            hotelid = {room.hotelid}
+                            fullAddress={room.fullAddress}
                             rating = {room.category}
                             price = {room.price}
                             />
                         ))
                     }
-                    </Grid>
-                    :
-                    null
-                }
-                
+                    </Grid>                
             </Container>
         </>
     );

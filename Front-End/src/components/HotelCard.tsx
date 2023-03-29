@@ -1,11 +1,22 @@
 import { Container, Grid, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export const HotelCard = ({extendable, damages, mountain, sea, city, hotelChain, rating, price}) => {
-    const isTrue = (variable: boolean) => {    
-        let render = variable? "✔️" : "❌";
+export const HotelCard = ({
+    extendable,
+    damages,
+    mountain,
+    sea,
+    address,
+    fullAddress,
+    hotelid,
+    hotelChain,
+    rating,
+    price,
+}) => {
+    const isTrue = (variable: boolean) => {
+        let render = variable ? "✔️" : "❌";
         return render;
-    }
+    };
 
     return (
         <div className="max-w-[18rem] mx-3 my-3 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
@@ -22,71 +33,56 @@ export const HotelCard = ({extendable, damages, mountain, sea, city, hotelChain,
                         {hotelChain}
                     </h5>
                 </a>
-                    <Grid
+                <Grid
                     container
                     direction={"row"}
                     alignItems="stretch"
                     className="mb-2"
-                    >
-                        <Grid item xs={6}>
-                        📍 {city}
-                        </Grid>
-                        <Grid item xs={4}>
+                >
+                    <Grid item xs={6}>
+                        📍 {address}
+                    </Grid>
+                    <Grid item xs={4}>
                         💲 {price}$
-                        </Grid>
-                        <Grid item xs={2}>
+                    </Grid>
+                    <Grid item xs={2}>
                         ⭐ {rating}
-                        </Grid>
                     </Grid>
-                    <Grid
-                    container
-                    direction={"row"}
-                    alignItems="stretch"
-                    >
-                        <Grid item xs={4.5}>
-                            extendable
-                        </Grid>
-                        <Grid item xs={2}>
-                        {
-                           isTrue(extendable)
-                        }
-                        </Grid>
-                        <Grid item xs={4.5}>
-                       damages
-                        </Grid>
-                        <Grid item xs={1}>
-                        {
-                            isTrue(damages)
-                        }
-                        </Grid>
+                </Grid>
+                <Grid container direction={"row"} alignItems="stretch">
+                    <Grid item xs={4.5}>
+                        extendable
                     </Grid>
-                    <Grid
-                    container
-                    direction={"row"}
-                    alignItems="stretch"
-                    >
-                        <Grid item xs={4.5}>
+                    <Grid item xs={2}>
+                        {isTrue(extendable)}
+                    </Grid>
+                    <Grid item xs={4.5}>
+                        damages
+                    </Grid>
+                    <Grid item xs={1}>
+                        {isTrue(damages)}
+                    </Grid>
+                </Grid>
+                <Grid container direction={"row"} alignItems="stretch">
+                    <Grid item xs={4.5}>
                         Mountain
-                        </Grid>
-                        <Grid item xs={2}>
-                        {
-                            isTrue(mountain)
-                        }
-                        </Grid>
-                        <Grid item xs={4.5}>
-                        Sea View
-                        </Grid>
-                        <Grid item xs={1}>
-                        {
-                            isTrue(sea)
-                        }
-                        </Grid>
                     </Grid>
+                    <Grid item xs={2}>
+                        {isTrue(mountain)}
+                    </Grid>
+                    <Grid item xs={4.5}>
+                        Sea View
+                    </Grid>
+                    <Grid item xs={1}>
+                        {isTrue(sea)}
+                    </Grid>
+                </Grid>
                 <p className="mb-3 mt-3 font-normal text-gray-700 dark:text-gray-400">
-                    Three Person room in {hotelChain} Hotel's {city} location with a rating of {rating} stars.
+                    Three Person room in {hotelChain} Hotel's {address} location
+                    with a rating of {rating} stars.
                 </p>
                 <Button>
-                    <Link to='/RoomView'></Link>
+                    <Link to="/RoomView"></Link>
                 </Button>
                 <a
                     href="#"

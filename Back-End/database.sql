@@ -3,8 +3,6 @@ SQL DDL's USED TO CREATE THE TABLES
 
 4) Implement the database according to your relational database schema and the constraints that you have defined.
 */
-CREATE DATABASE Hotels;
-
 
 CREATE TABLE HotelChain (
     ChainID CHAR(5) NOT NULL,
@@ -50,10 +48,12 @@ CREATE TABLE Positions (
 );
 
 CREATE TABLE Customer (
-    CustomerID CHAR(5) NOT NULL,
+    CustomerID SERIAL NOT NULL,
+    Email VARCHAR(40) NOT NULL,
+    Password VARCHAR(40) NOT NULL,
     FullName VARCHAR(40) NOT NULL,
     Address VARCHAR(50) NOT NULL,
-    SSN NUMERIC(9) NOT NULL,
+    SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ),
     DateOfRegistration DATE NOT NULL,
     PRIMARY KEY(CustomerID)
 );
@@ -75,7 +75,7 @@ CREATE TABLE Renting (
     RentingID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
-    CustomerID CHAR(5) NOT NULL,
+    CustomerID SERIAL NOT NULL,
     CheckinDate DATE NOT NULL,
     checkoutDate DATE NOT NULL,
     PRIMARY KEY(RentingID),
@@ -91,7 +91,7 @@ CREATE TABLE Archive (
     ArchivedID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
-    CustomerID CHAR(5) NOT NULL,
+    CustomerID SERIAL NOT NULL,
     BookingDate DATE NOT NULL,
     CheckinDate DATE NOT NULL,
     checkoutDate DATE NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE Booking (
     BookingID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
-    CustomerID CHAR(5) NOT NULL,
+    CustomerID SERIAL NOT NULL,
     BookingDate DATE NOT NULL,
     CheckinDate DATE NOT NULL,
     CheckoutDate Date NOT NULL,
@@ -115,7 +115,6 @@ CREATE TABLE Booking (
     FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID) ON DELETE CASCADE
 );
-
 
 
 /*

@@ -37,7 +37,6 @@ app.get('/Hotels', async (req, res) => {
         + (params["price"]!="undefined"? " AND room.price <= " + params["price"] : "")
         + (params["city"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.address LIKE '%"+params["city"]+"%')":"")
         + (params["hotelChain"]!="undefined"? " AND room.hotelID LIKE '" + params["hotelChain"] +"%'": "")
-        
         const send = await pool.query(query +";");
         res.json(send.rows);
     }
@@ -49,12 +48,65 @@ app.get('/Hotels', async (req, res) => {
 
 //to be filled later
 
-// app.post('/Hotels/Booking', async (req, res) => {
-//     let x = "SELECT * FROM room, booking";
-//     let query = "SELECT";
+app.post('/Login', async (req, res) => {
+    //form data
+    let email = req.body.email;
+    let password = req.body.password;
+    //building query and performing it
+    let query = "SELECT * FROM customer WHERE customer.email = '"+email+"' AND password = '"+password+"'"
+    const queryResult = await pool.query(query +";");
+    //checking if the user is the table, if not then sending status 404, if user in table send status 200
+    if(queryResult.rows.length == 0){
+        res.status(404).send('not found')
+    }
+    else if (queryResult.rows.length == 1){
+        res.status(200).json(queryResult.rows);
+    }
+})
 
-//     console.log(req.body);
-// })
+app.post('/Register', async (req, res) => {
+
+    //form data
+    let email = req.body.email;
+    let password = req.body.password;
+    let fullname = req.body.fullname;
+    let ssn = req.body.ssn;
+    let address = req.body.address;
+    let dateofregistration = req.body.dateofregistration;
+
+    // Verifying if the customer already exists
+    const duplicateFinder = await pool.query("SELECT * from customer WHERE customer.ssn='"+ssn+"' OR customer.email='"+email+"';");
+    if(duplicateFinder.rows.length>0){
+        res.status(404).send('Account already exists');
+    }
+    else{
+        let query = "INSERT INTO Customer VALUES (DEFAULT,'"
+                                                        +email+"','"
+                                                        +password+"','"
+                                                        +fullname+"','"
+                                                        +address+"','"
+                                                        +ssn+"','"
+                                                        +dateofregistration+"')"
+                                                        +" RETURNING *";
+        let queryResult;
+        console.log(query);
+        try {
+            queryResult = await pool.query(query + ";");
+        } catch (error) {
+            console.log("Insertion failed.");
+        }
+        //if queryResult.rows is undefined (couldn't insert), it will send res.status(200) not found
+        //else it's true
+        try {
+            if (queryResult.rows) {
+
+                res.status(200).send(queryResult.rows);
+            }
+        } catch (error) {
+            res.status(404).json("Invalid data, couldn't insert");
+        }
+    } 
+})
 
 //Kept for future reference 
 

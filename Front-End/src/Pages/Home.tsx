@@ -21,7 +21,7 @@ import { cities, hotelChains } from "../data/data";
 import { Room } from "../DTO/dtos";
 import { HotelCard } from "../components/HotelCard";
 
-export const Home = () => {
+export const Home = ({customer}) => {
     const [checkInValue, setCheckInValue] = useState<Dayjs | null>(dayjs());
     const [checkOutValue, setCheckOutValue] = useState<Dayjs | null>();
     const [capacity, setCapacity] = useState<Number>();

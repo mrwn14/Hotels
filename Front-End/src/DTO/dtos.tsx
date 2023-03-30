@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+
 export interface Room {
     roomid: string;
     hotelid: string;
@@ -14,4 +16,22 @@ export interface Room {
     extendable: boolean;
     damages: boolean;
   }
-  
+export interface Customer {
+  customerid: string;
+  address : string;
+  dateofregistration: Dayjs;
+  email: string;
+  fullname: string,
+  password: string;
+  ssn: string;
+  bookings?: Booking
+}
+export interface Booking {
+  bookingid: string,
+  hotelid: string,
+  roomid: string,
+  customerid: string,
+  bookingdate: Dayjs,
+  checkindate: Dayjs,
+  checkoutdate: Dayjs
+}

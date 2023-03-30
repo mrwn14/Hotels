@@ -1,9 +1,12 @@
 import { Navbar, Button } from "flowbite-react";
 import { Link } from "react-router-dom";
-export const NavBar = ({customer, setCustomer}) => {
+export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
     const handleButton = () => {
         if (customer) {
             setCustomer(undefined)
+        }
+        if (employee) {
+            setEmployee(undefined)
         }
     }
     return (
@@ -21,6 +24,7 @@ export const NavBar = ({customer, setCustomer}) => {
                 }</Link></Button>
                 <Navbar.Toggle />
                 <div className="mx-5 py-2">{customer? customer.fullname : ""}</div>
+                <div className="mx-5 py-2">{employee? employee.fullname : ""}</div>
             </div>
             <Navbar.Collapse>
                 <Navbar.Link href="/navbars" active={true}>

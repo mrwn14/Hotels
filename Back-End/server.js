@@ -72,8 +72,11 @@ app.post('/Login', async (req, res) => {
     if(queryResult.rows.length == 0){
         res.status(404).send('not found')
     }
-    else if (queryResult.rows.length == 1){
+    else if (queryResult.rows.length == 1 && !employee){
         res.status(200).json(queryResult.rows);
+    }
+    else if (queryResult.rows.length == 1 && employee){
+        res.status(201).json(queryResult.rows);
     }
 })
 

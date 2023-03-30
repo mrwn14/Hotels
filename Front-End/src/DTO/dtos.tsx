@@ -26,6 +26,16 @@ export interface Customer {
   ssn: string;
   bookings?: Booking
 }
+export interface Employee {
+  employeeid: string;
+  email : string;
+  password: string;
+  positionid: string;
+  hotelid: string,
+  fullname: string;
+  address: string;
+  ssn: string
+}
 export interface Booking {
   bookingid: string,
   hotelid: string,

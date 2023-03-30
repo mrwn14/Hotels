@@ -3,9 +3,9 @@ import dayjs from "dayjs";
 import * as React from "react";
 import { useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { Customer } from "../DTO/dtos";
+import { Customer, Employee } from "../DTO/dtos";
 
-export const Login = ({customer, setCustomer}) => {
+export const Login = ({customer, setCustomer, employee, setEmployee}) => {
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [logged, setLogged] = useState(false);
@@ -19,18 +19,38 @@ export const Login = ({customer, setCustomer}) => {
         axios
             .post("http://localhost:4000/Login", data)
             .then((response) => {
-                let tempResponse = response.data[0];
-                setCustomer({
-                    address : tempResponse.address,
-                    customerid: tempResponse.customerid,
-                    dateofregistration: dayjs(tempResponse.dateofregistration),
-                    email: tempResponse.email,
-                    fullname: tempResponse.fullname,
-                    ssn: tempResponse.ssn,
-                } as Customer)
+                if (response.status === 200) {
+                    let tempResponse = response.data[0];
+                    setCustomer(
+                        {
+                            address : tempResponse.address,
+                            customerid: tempResponse.customerid,
+                            dateofregistration: dayjs(tempResponse.dateofregistration),
+                            email: tempResponse.email,
+                            fullname: tempResponse.fullname,
+                            ssn: tempResponse.ssn,
+                        } as Customer
+                    );
+                }
+                else if (response.status === 201) {
+                    let tempResponse = response.data[0];
+                    setEmployee(
+                        {
+                            employeeid: tempResponse.employeeid,
+                            email: tempResponse.email,
+                            password: tempResponse.password,
+                            positionid: tempResponse.positionid,
+                            hotelid: tempResponse.hotelid,
+                            fullname: tempResponse.fullname,
+                            address: tempResponse.address,
+                            ssn: tempResponse.ssn
+                        } as Employee
+                    );
+                }
                 setLogged(true);
             })
             .catch((error) => {
+                console.log(error);
                 alert('Email/Password combination not found.');
             });
 
@@ -92,7 +112,7 @@ export const Login = ({customer, setCustomer}) => {
                         Sign up
                     </Link>
                 </p>
-                {logged && (
+                {logged && customer && (
                     <Navigate to="/" replace={true} />
                  )}
             </div>

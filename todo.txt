@@ -1,0 +1,4 @@
+set up customer booking Page
+set up customer booking logic
+set up employee booking Page
+set up employee turn booking into renting logic

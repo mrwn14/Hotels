@@ -60,6 +60,8 @@ CREATE TABLE Customer (
 
 CREATE TABLE Employee (
     EmployeeID CHAR(5) NOT NULL,
+    Email VARCHAR(40) NOT NULL,
+    Password VARCHAR(40) NOT NULL,
     PositionID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
     FullName VARCHAR(40) NOT NULL,
@@ -436,5 +438,24 @@ INSERT INTO Room VALUES
     ('20440', '15008', 500, 90, 'Air conditioning, TV', 1, false, false, false, false);
 
 
+INSERT INTO positions VALUES 
+('00001', 'clerk'),
+('00002', 'receptionist'), 
+('00003', 'developer'), 
+('00004', 'house keeper'), 
+('00005', 'manager'), 
+('00006', 'HR represantative'); 
+
+INSERT INTO employee VALUES
+('00001',  'employee1@admin.com', '12345', '00001', '15008', 'raj tajmahal', '155 stewart street', 563349846),
+('00002',  'employee2@admin.com', '12345', '00002', '15007', 'raj tajmahal', '155 stewart street', 563349846),
+('00003',  'employee3@admin.com', '12345', '00003', '15006', 'raj tajmahal', '155 stewart street', 563349846),
+('00004',  'employee4@admin.com', '12345', '00002', '15005', 'raj tajmahal', '155 stewart street', 563349846),
+('00005',  'employee5@admin.com', '12345', '00004', '15004', 'raj tajmahal', '155 stewart street', 563349846),
+('00006',  'employee6@admin.com', '12345', '00005', '15003', 'raj tajmahal', '155 stewart street', 563349846),
+('00007',  'employee7@admin.com', '12345', '00003', '15002', 'raj tajmahal', '155 stewart street', 563349846),
+('00008',  'employee8@admin.com', '12345', '00002', '15001', 'raj tajmahal', '155 stewart street', 563349846),
+('00009',  'employee9@admin.com', '12345', '00002', '14008', 'raj tajmahal', '155 stewart street', 563349846),
+('00010',  'employee10@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349846);
 
 DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain;

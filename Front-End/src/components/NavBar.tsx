@@ -1,6 +1,11 @@
 import { Navbar, Button } from "flowbite-react";
 import { Link } from "react-router-dom";
-export const NavBar = () => {
+export const NavBar = ({customer, setCustomer}) => {
+    const handleButton = () => {
+        if (customer) {
+            setCustomer(undefined)
+        }
+    }
     return (
         <Navbar fluid={true} rounded={true}  className=" lg:mx-24 md:mx-12 sm:mx-4 max-w-6xl xl:mx-auto">
             <Navbar.Brand href="">
@@ -11,8 +16,11 @@ export const NavBar = () => {
                 />
             </Navbar.Brand>
             <div className="flex md:order-2">
-                <Button><Link to={"/login"}>Get started</Link></Button>
+                <Button onClick={handleButton}><Link to={customer? "/":"/Login"}>{
+                    customer? "Logout" : "Login"
+                }</Link></Button>
                 <Navbar.Toggle />
+                <div className="mx-5 py-2">{customer? customer.fullname : ""}</div>
             </div>
             <Navbar.Collapse>
                 <Navbar.Link href="/navbars" active={true}>

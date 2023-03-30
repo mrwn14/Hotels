@@ -2,11 +2,14 @@ import axios from "axios";
 import dayjs from "dayjs";
 import * as React from "react";
 import { useRef, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { Customer } from "../DTO/dtos";
 
 export const Login = ({customer, setCustomer}) => {
-    const emailRef = useRef<HTMLInputElement>();
-    const passwordRef = useRef<HTMLInputElement>();
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+    const [logged, setLogged] = useState(false);
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         let data = {
@@ -25,7 +28,7 @@ export const Login = ({customer, setCustomer}) => {
                     fullname: tempResponse.fullname,
                     ssn: tempResponse.ssn,
                 } as Customer)
-                
+                setLogged(true);
             })
             .catch((error) => {
                 alert('Email/Password combination not found.');
@@ -68,6 +71,7 @@ export const Login = ({customer, setCustomer}) => {
                     <a
                         href="#"
                         className="text-xs text-[#2C55D3] hover:underline"
+                        onClick={() => alert('too bad')}
                     >
                         Forget Password?
                     </a>
@@ -81,13 +85,16 @@ export const Login = ({customer, setCustomer}) => {
                 <p className="mt-8 text-xs font-light text-center text-gray-700">
                     {" "}
                     Don't have an account?{" "}
-                    <a
-                        href="#"
+                    <Link
+                        to="/Register"
                         className="font-medium text-blue-600 hover:underline"
                     >
                         Sign up
-                    </a>
+                    </Link>
                 </p>
+                {logged && (
+                    <Navigate to="/" replace={true} />
+                 )}
             </div>
         </div>
     );

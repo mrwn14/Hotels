@@ -1,14 +1,15 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { Customer } from "../DTO/dtos";
 
 export const Register = ({ customer, setCustomer }) => {
-    const emailRef = useRef<HTMLInputElement>();
-    const passwordRef = useRef<HTMLInputElement>();
-    const fullnameRef = useRef<HTMLInputElement>();
-    const ssnRef = useRef<HTMLInputElement>();
-    const addressRef = useRef<HTMLInputElement>();
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+    const fullnameRef = useRef<HTMLInputElement>(null);
+    const ssnRef = useRef<HTMLInputElement>(null);
+    const addressRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -37,8 +38,8 @@ export const Register = ({ customer, setCustomer }) => {
     return (
         <>
             <section className="bg-gray-50 dark:bg-gray-900">
-                <div className="flex flex-col items-center justify-center px-6 mx-auto md:h-screen lg:py-0">
-                    <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div className="flex flex-col items-center px-6 mx-auto lg:py-0 h-screen">
+                    <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mt-32">
                         <div className="p-6 space-y-4 md:space-y-6 sm:p-8 ">
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                                 <u>Create an account</u>
@@ -133,12 +134,12 @@ export const Register = ({ customer, setCustomer }) => {
                                 </div>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                     Already have an account?{" "}
-                                    <a
-                                        href="#"
+                                    <Link
+                                        to="/login"
                                         className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                     >
                                         Login here
-                                    </a>
+                                    </Link>
                                 </p>
                             </form>
                         </div>

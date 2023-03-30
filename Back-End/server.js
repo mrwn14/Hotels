@@ -17,6 +17,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 pool.connect();
 
+
+const employeeChecker = (email) => {
+    let employee = false;
+    email = email.split("@")[1].split(".")[0]
+    if (email == "admin"){
+        employee = true;
+    }
+    return employee
+}
 // req = request
 // res = response
 // app.(http request) to send any http request to the url in the first parameter of the function  
@@ -53,7 +62,11 @@ app.post('/Login', async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     //building query and performing it
-    let query = "SELECT * FROM customer WHERE customer.email = '"+email+"' AND password = '"+password+"'"
+    let employee = employeeChecker(email);
+    let employeeQuery = "SELECT * FROM employee WHERE employee.email = '"+email+"' AND employee.password = '"+password+"'"
+    let CustomerQuery = "SELECT * FROM customer WHERE customer.email = '"+email+"' AND customer.password = '"+password+"'"
+    let query = ""
+    employee? query = employeeQuery : query = CustomerQuery
     const queryResult = await pool.query(query +";");
     //checking if the user is the table, if not then sending status 404, if user in table send status 200
     if(queryResult.rows.length == 0){

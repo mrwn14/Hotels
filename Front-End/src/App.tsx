@@ -9,10 +9,10 @@ import { Login } from "./Pages/Login";
 import { Register } from "./Pages/Register";
 
 function App() {
-    const [customer, setCustomer] = useState<Customer>();
+    const [customer, setCustomer] = useState<Customer | undefined>(undefined);
     return (
         <>
-            <NavBar />
+            <NavBar customer={customer} setCustomer={setCustomer}/>
             <Routes>
                 <Route path="/" element={<Home customer={customer}/>}></Route>
                 <Route path="/login" element={<Login customer={customer} setCustomer={setCustomer}/>}></Route>

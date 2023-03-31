@@ -16,7 +16,7 @@ function App() {
         <>
             <NavBar customer={customer} setCustomer={setCustomer} employee ={employee} setEmployee = {setEmployee} />
             <Routes>
-                <Route path="/" element={customer? (<Home customer={customer}/>) : (<EmployeeDashboard employee={employee}/>)}></Route>
+                <Route path="/" element={!employee? (<Home customer={customer}/>) : (<EmployeeDashboard employee={employee}/>)}></Route>
                 <Route path="/login" element={<Login customer={customer} setCustomer={setCustomer} employee={employee} setEmployee={setEmployee}/>}></Route>
                 <Route path="/Register" element={<Register customer={customer} setCustomer={setCustomer}/>}></Route>
                 

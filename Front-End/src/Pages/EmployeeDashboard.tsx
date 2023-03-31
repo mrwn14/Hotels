@@ -1,5 +1,5 @@
 export const EmployeeDashboard = ({employee}) => {
   return (
-    <div>{employee}</div>
+    <div>{employee.fullname}</div>
   )
 }

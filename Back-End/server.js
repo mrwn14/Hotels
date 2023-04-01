@@ -153,6 +153,17 @@ app.post('/Book', async (req, res) => {
         res.status(404).json("Error occured.");
     }
 })
+
+app.post('/HotelBookings/:id', async (req, res) => {
+    params = req.body
+    let query1 = "INSERT INTO renting VALUES (DEFAULT, '"+params["hotelid"]+"','"+params["roomid"]+"','"+params["customerid"]+"','"+params["checkindate"]+"','"+params["checkoutdate"]+"') RETURNING *;"
+    const send1 = await pool.query(query1);
+    if (send1.rows) {
+        let query2 = "DELETE FROM booking WHERE bookingID = '"+ params["bookingid"] + "'"
+        const send2 = await pool.query(query2)
+        res.sendStatus(200);
+    }
+})
 //Kept for future reference 
 
 // app.get('/Hotels/:id', async (req, res) => {

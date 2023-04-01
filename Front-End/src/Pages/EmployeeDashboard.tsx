@@ -46,7 +46,7 @@ export const EmployeeDashboard = ({ employee }) => {
       })
   }, [])
   const nav = useNavigate();
-  const handleClick = (hotel: Booking) => {
+  const handleDelete = (hotel: Booking) => {
     let data = {
       bookingid: hotel.bookingid.toString(),
       customerid: hotel.customerid.toString(),
@@ -68,7 +68,32 @@ export const EmployeeDashboard = ({ employee }) => {
         }
         getBookings()
       })
-    
+  }
+
+  const handleRenting = (hotel) => {
+    let data = {
+      bookingid: hotel.bookingid.toString(),
+      customerid: hotel.customerid.toString(),
+      hotelid: hotel.hotelid.toString(),
+      roomid: hotel.roomid.toString(),
+      bookingdate: hotel.bookingdate.toString(),
+      checkindate: hotel.checkindate.toString(),
+      checkoutdate: hotel.checkoutdate.toString()
+    }
+    let url = new URL('http://localhost:4000/HotelBookings/' + hotel.hotelid)
+    axios
+                .post("http://localhost:4000/HotelBookings/" + hotel.hotelid, data)
+                .then((response) => {
+                    if(response.status == 200){
+                        alert('Customer checked in successfully');
+                        getBookings();
+                        nav('/')
+                    }
+
+                })
+                .catch((error) => {
+                    alert(error.response.data);
+                });
   }
 
   return (
@@ -105,10 +130,20 @@ export const EmployeeDashboard = ({ employee }) => {
                       size="large"
                       className="h-[3rem] flex-3"
                       onClick={() => {
-                        handleClick(hotel);
+                        handleDelete(hotel);
                       }}
                     >
                       Delete
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      className="h-[3rem] flex-3 m-3"
+                      onClick={() => {
+                        handleRenting(hotel);
+                      }}
+                    >
+                      Rent
                     </Button>
                   </AccordionDetails>
                 </Accordion>

@@ -31,13 +31,12 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
                 <div className="mx-5 py-2">{employee? employee.fullname : ""}</div>
             </div>
             <Navbar.Collapse>
-                <Navbar.Link href="/navbars" active={true}>
-                    <Link to={"/"}>Contact</Link>
-                </Navbar.Link>
-                <Navbar.Link href=""><Link to={"/"}>Book</Link></Navbar.Link>
-                <Navbar.Link href=""><Link to={"/"}>Hotels</Link></Navbar.Link>
-                <Navbar.Link href=""><Link to={"/"}>About</Link></Navbar.Link>
-                <Navbar.Link href=""><Link to={"/"}>Contact</Link></Navbar.Link>
+                {customer && <Navbar.Link href="/navbars" active={true}>
+                    <Link to={"/"}>Home</Link>
+                </Navbar.Link>}
+                {employee && <Navbar.Link href=""><Link to={"/"}>Bookings</Link></Navbar.Link>}
+                {customer && <Navbar.Link href=""><Link to={"/Bookings"}>Bookings</Link></Navbar.Link>}
+                {employee && <Navbar.Link href=""><Link to={"/Rentings"}>Rentings</Link></Navbar.Link>}
             </Navbar.Collapse>
         </Navbar>
     );

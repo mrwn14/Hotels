@@ -112,7 +112,7 @@ export const Login = ({customer, setCustomer, employee, setEmployee}) => {
                         Sign up
                     </Link>
                 </p>
-                {logged && customer && (
+                {logged && (
                     <Navigate to="/" replace={true} />
                  )}
             </div>

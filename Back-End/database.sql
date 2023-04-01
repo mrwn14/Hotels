@@ -74,7 +74,7 @@ CREATE TABLE Employee (
 );
 
 CREATE TABLE Renting (
-    RentingID CHAR(5) NOT NULL,
+    RentingID SERIAL NOT NULL,
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
     CustomerID SERIAL NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE Renting (
 
 
 CREATE TABLE Archive (
-    ArchiveID CHAR(5) NOT NULL,
+    ArchiveID SERIAL NOT NULL,
     IsBooking BOOLEAN NOT NULL,
     ArchivedID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE Archive (
 
 
 CREATE TABLE Booking (
-    BookingID CHAR(5) NOT NULL,
+    BookingID SERIAL NOT NULL,
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
     CustomerID SERIAL NOT NULL,

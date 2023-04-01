@@ -1,7 +1,7 @@
 import axios from "axios";
 import dayjs from "dayjs";
-import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { Customer } from "../DTO/dtos";
 
 export const Register = ({ customer, setCustomer }) => {
@@ -10,6 +10,7 @@ export const Register = ({ customer, setCustomer }) => {
     const fullnameRef = useRef<HTMLInputElement>(null);
     const ssnRef = useRef<HTMLInputElement>(null);
     const addressRef = useRef<HTMLInputElement>(null);
+    const [logged, setLogged] = useState(false);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -30,6 +31,7 @@ export const Register = ({ customer, setCustomer }) => {
                     customerid: response.data[0].customerid, //adding the generated id
                     ...data //adding the data we already have
                 })  
+                setLogged(true);
             })
             .catch((error) => {
                 alert(error.response.data);
@@ -142,6 +144,9 @@ export const Register = ({ customer, setCustomer }) => {
                                     </Link>
                                 </p>
                             </form>
+                            {logged && customer && (
+                    <Navigate to="/" replace={true} />
+                 )}
                         </div>
                     </div>
                 </div>

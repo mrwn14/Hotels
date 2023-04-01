@@ -77,7 +77,7 @@ export const Home = ({customer}) => {
       }
 
     const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined) => {
-        let newCheckIn, newCheckOut, newCapacity, newRating, newCity, newHotelChain, newPrice;
+        let newCheckIn: string, newCheckOut: string, newCapacity:string, newRating:string, newCity:string, newHotelChain:string, newPrice:string;
         // newCheckIn = ((checkInValue===undefined||checkInValue===null)? "undefined" : checkInValue.format("YYYY-MM-DD"));
         if (checkInValue === undefined || checkInValue == null) {
             newCheckIn = "undefined"; 
@@ -136,21 +136,28 @@ export const Home = ({customer}) => {
     //Filter button handler, get request to api which sends back room information, which is filtered then saved under 'data'
     const handleClick = () => {
         let data = compileData(checkInValue, checkOutValue, capacity, rating, city, hotelChain, price);
-        let url = new URL('http://localhost:4000/Hotels')
-        Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
-        fetch(url)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data: Room[]) => {
-                data.map((room) => {
-                    room.hotelName = getHotelName(room.hotelid);
-                    room.fullAddress = room.address;
-                    room.address = getCity(room.address);
-                    return room;
+        if (data.checkOut != "undefined") {
+            let url = new URL('http://localhost:4000/Hotels')
+            Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
+            fetch(url)
+                .then((response) => {
+                    return response.json();
                 })
-                setData(data);
-            });
+                .then((data: Room[]) => {
+                    data.map((room) => {
+                        room.hotelName = getHotelName(room.hotelid);
+                        room.fullAddress = room.address;
+                        room.address = getCity(room.address);
+                        return room;
+                    })
+                    console.log(data);
+                    setData(data);
+                });
+            }
+        else {
+            alert("Enter a checkout date");
+        }
+        console.log(data);
     }
     return (
         <>

@@ -33,8 +33,16 @@ app.get('/',(req, res) => {
     res.send('Hotels API running ✔️')
 })
 
-
 // // ROUTES
+app.get('/EmployeeBookings',async (req, res) => {
+    params = req.query;
+    let hotelId = params['hotelid'];
+    query = "SELECT * FROM booking WHERE hotelid = '" + hotelId +"'";
+    console.log(query);
+    const send = await pool.query(query + ";");
+    res.json(send.rows);
+})
+
 app.get('/Hotels', async (req, res) => {
     try {
         query = "SELECT roomid, room.hotelid, roomnumber, price, amenities, capacity, seaview, mountainview, extendable, damages, Address, Category FROM room, hotel WHERE room.HotelID = hotel.HotelID AND "
@@ -52,7 +60,6 @@ app.get('/Hotels', async (req, res) => {
     catch (err) {
         console.log(err);
     }
-
 })
 
 //to be filled later
@@ -159,6 +166,17 @@ app.post('/Book', async (req, res) => {
 //     }
 // })
 
+app.delete('/HotelBookings/:id', async (req, res) => {
+    params = req.query;
+    let query1 = "INSERT INTO archive VALUES (DEFAULT, true,'"+ params["bookingid"] +"' , '"+params["hotelid"]+"', '"+ params["roomid"]+"', '"+ params["customerid"]+"', '"+ params["bookingdate"]+"', '"+ params["checkindate"]+"', '"+ params["checkoutdate"]+"') RETURNING *"
+    console.log(query1);
+    const send1 = await pool.query(query1);
+    if (send1.rows) {
+        let query2 = "DELETE FROM booking WHERE bookingID = '"+ params["bookingid"] + "'"
+        const send2 = await pool.query(query2)
+        res.sendStatus(200);
+    }
+})
 
 app.listen(4000, () => {
     console.log('Server is running on port 4000');

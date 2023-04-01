@@ -1,4 +1,5 @@
-set up customer booking Page
-set up customer booking logic
-set up employee booking Page
+set up customer booking Page - Done
+set up customer booking logic - Done
+set up employee booking Page - To do next
+set up customer bookings view with delete booking - to do next
 set up employee turn booking into renting logic

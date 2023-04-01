@@ -124,6 +124,28 @@ app.post('/Register', async (req, res) => {
     } 
 })
 
+app.post('/Book', async (req, res) => {
+    //form data
+    let customerid = req.body.customerid;
+    let hotelid = req.body.hotelid;
+    let roomid = req.body.roomid;
+    let bookingdate = req.body.bookingdate;
+    let checkInValue = req.body.checkInValue;
+    let checkOutValue = req.body.checkOutValue;
+
+
+    let query = "INSERT INTO booking VALUES (DEFAULT,'"+hotelid+"','"+roomid+"','"+customerid+"','"+bookingdate+"','"+checkInValue+"','"+checkOutValue+"');"
+    console.log(query);
+    const queryResult = await pool.query(query);
+    //checking if the user is the table, if not then sending status 404, if user in table send status 200
+    try {
+        if (queryResult.rows) {
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Error occured.");
+    }
+})
 //Kept for future reference 
 
 // app.get('/Hotels/:id', async (req, res) => {

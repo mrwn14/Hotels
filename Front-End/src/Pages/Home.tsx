@@ -20,7 +20,22 @@ import { useState, ChangeEvent } from "react";
 import { cities, hotelChains } from "../data/data";
 import { Room } from "../DTO/dtos";
 import { HotelCard } from "../components/HotelCard";
-
+export const getHotelName = (id : string) : string => {
+    switch (id.charAt(1)) {
+        case "1":
+            return "Marriott";
+        case "2":
+            return "Hilton";
+        case "3":
+            return "Fairmont";
+        case "4":
+            return "Galaxy";
+        case "5":
+            return "Refresh Resort";
+        default:
+            return "";
+    }
+}
 export const Home = ({customer}) => {
     const [checkInValue, setCheckInValue] = useState<Dayjs | null>(dayjs());
     const [checkOutValue, setCheckOutValue] = useState<Dayjs | null>();
@@ -60,22 +75,6 @@ export const Home = ({customer}) => {
         const city = addressArr[addressArr.length - 2];
         return city;
       }
-    const getHotelName = (id : string) : string => {
-        switch (id.charAt(1)) {
-            case "1":
-                return "Marriott";
-            case "2":
-                return "Hilton";
-            case "3":
-                return "Fairmont";
-            case "4":
-                return "Galaxy";
-            case "5":
-                return "Refresh Resort";
-            default:
-                return "";
-        }
-    }
 
     const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined) => {
         let newCheckIn, newCheckOut, newCapacity, newRating, newCity, newHotelChain, newPrice;
@@ -345,16 +344,22 @@ export const Home = ({customer}) => {
                     {
                         data.map(room => (
                             <HotelCard 
-                            extendable = {room.extendable}
-                            damages = {room.damages}
-                            mountain = {room.mountainview}
-                            sea = {room.seaview}
-                            address = {room.address}
-                            hotelChain = {room.hotelName}
-                            hotelid = {room.hotelid}
-                            fullAddress={room.fullAddress}
-                            rating = {room.category}
-                            price = {room.price}
+                                extendable = {room.extendable}
+                                damages = {room.damages}
+                                mountain = {room.mountainview}
+                                sea = {room.seaview}
+                                address = {room.address}
+                                hotelChain = {room.hotelName}
+                                hotelid = {room.hotelid}
+                                fullAddress={room.fullAddress}
+                                rating = {room.category}
+                                price = {room.price}
+                                amenities = {room.amenities}
+                                checkInValue = {checkInValue?.format("YYYY-MM-DD")}
+                                checkOutValue = {checkOutValue?.format("YYYY-MM-DD")}
+                                capacity = {room.capacity}
+                                roomid = {room.roomid}
+                                customerid={customer?.customerid}
                             />
                         ))
                     }

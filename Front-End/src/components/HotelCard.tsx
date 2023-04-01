@@ -1,7 +1,8 @@
 import { Container, Grid, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-
+import { hotelImages } from "../data/data";
 export const HotelCard = ({
+    roomid,
     extendable,
     damages,
     mountain,
@@ -12,21 +13,26 @@ export const HotelCard = ({
     hotelChain,
     rating,
     price,
+    amenities,
+    checkInValue,
+    checkOutValue,
+    capacity,
+    customerid
 }) => {
     const isTrue = (variable: boolean) => {
         let render = variable ? "✔️" : "❌";
         return render;
     };
-
+    
     return (
         <div className="max-w-[18rem] mx-3 my-3 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
-            <a href="#">
+            <div className="">
                 <img
-                    className="rounded-t-lg"
-                    src="/src/media/test.webp"
+                    className="rounded-t-lg max-w-[100%] block"
+                    src={hotelImages[Math.floor(Math.random() * 8)]}
                     alt=""
                 />
-            </a>
+            </div>
             <div className="p-5">
                 <a href="#">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -84,8 +90,9 @@ export const HotelCard = ({
                 <Button>
                     <Link to="/RoomView"></Link>
                 </Button>
-                <a
-                    href="#"
+                
+                <Link
+                    to={"/HotelDetails/"+extendable+"/"+damages+"/"+mountain+"/"+sea+"/"+address+"/"+fullAddress+"/"+hotelid+"/"+hotelChain+"/"+rating+"/"+price+"/"+amenities+"/"+checkInValue+"/"+checkOutValue+"/"+capacity+'/'+roomid+'/'+customerid}
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-zinc-800 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                     Book
@@ -102,7 +109,7 @@ export const HotelCard = ({
                             clip-rule="evenodd"
                         ></path>
                     </svg>
-                </a>
+                </Link>
             </div>
         </div>
     );

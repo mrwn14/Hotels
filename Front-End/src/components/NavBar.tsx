@@ -11,17 +11,21 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
     }
     return (
         <Navbar fluid={true} rounded={true}  className=" lg:mx-24 md:mx-12 sm:mx-4 max-w-6xl xl:mx-auto">
-            <Navbar.Brand href="">
-                <img
-                    src="/src/media/logo.svg"
-                    className="mr-3 h-6 sm:h-9 self-center whitespace-nowrap"
-                    alt="Company Logo"
-                />
-            </Navbar.Brand>
+            <Link to="/">
+                <Navbar.Brand href="">
+                    <img
+                        src="/src/media/logo.svg"
+                        className="mr-3 h-6 sm:h-9 self-center whitespace-nowrap"
+                        alt="Company Logo"
+                    />
+                </Navbar.Brand>
+            </Link>
             <div className="flex md:order-2">
-                <Button onClick={handleButton}><Link to={customer? "/":"/Login"}>{
+                <Link to={customer? "/":"/Login"}>
+                <Button onClick={handleButton}>{
                     customer? "Logout" : "Login"
-                }</Link></Button>
+                }</Button>
+                </Link>
                 <Navbar.Toggle />
                 <div className="mx-5 py-2">{customer? customer.fullname : ""}</div>
                 <div className="mx-5 py-2">{employee? employee.fullname : ""}</div>

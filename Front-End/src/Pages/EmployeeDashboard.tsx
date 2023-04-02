@@ -68,6 +68,9 @@ export const EmployeeDashboard = ({ employee }) => {
         }
         getBookings()
       })
+      .catch(error => {
+        console.log(error)
+      });
   }
 
   const handleRenting = (hotel) => {
@@ -82,18 +85,18 @@ export const EmployeeDashboard = ({ employee }) => {
     }
     let url = new URL('http://localhost:4000/HotelBookings/' + hotel.hotelid)
     axios
-                .post("http://localhost:4000/HotelBookings/" + hotel.hotelid, data)
-                .then((response) => {
-                    if(response.status == 200){
-                        alert('Customer checked in successfully');
-                        getBookings();
-                        nav('/')
-                    }
+      .post("http://localhost:4000/HotelBookings/" + hotel.hotelid, data)
+      .then((response) => {
+        if (response.status == 200) {
+          alert('Customer checked in successfully');
+          getBookings()
+          nav('/')
+        }
 
-                })
-                .catch((error) => {
-                    alert(error.response.data);
-                });
+      })
+      .catch((error) => {
+        alert(error.response.data);
+      });
   }
 
   return (

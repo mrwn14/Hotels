@@ -9,6 +9,7 @@ import { Login } from "./Pages/Login";
 import { Register } from "./Pages/Register";
 import { EmployeeDashboard } from "./Pages/EmployeeDashboard";
 import { HotelView } from "./Pages/HotelView";
+import { Bookings } from "./Pages/Bookings";
 
 function App() {
     const [customer, setCustomer] = useState<Customer | undefined>(undefined);
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/" element={!employee? (<Home customer={customer}/>) : (<EmployeeDashboard employee={employee}/>)}></Route>
                 <Route path="/login" element={<Login customer={customer} setCustomer={setCustomer} employee={employee} setEmployee={setEmployee}/>}></Route>
                 <Route path="/Register" element={<Register customer={customer} setCustomer={setCustomer}/>}></Route>
+                <Route path="/Bookings" element={<Bookings customer={customer}/>}></Route>
                 <Route path="/HotelDetails/:extendable/:damages/:mountain/:sea/:address/:fullAddress/:hotelid/:hotelChain/:rating/:price/:amenities/:checkInValue/:checkOutValue/:capacity/:roomid/:customerid" element={<HotelView customer={customer}/>}></Route>
 
                 

@@ -62,6 +62,18 @@ app.get('/Hotels', async (req, res) => {
     }
 })
 
+app.get('/HotelBookings/:customerid', async (req, res) => {
+    query = "SELECT * FROM booking WHERE customerid = '" + req.params.customerid +"'";
+    send = await pool.query(query + ";");
+    if (send.rows.length == 0) {
+        res.status(404);
+    }
+    else if (send.rows.length > 0 ) {
+        console.log(send.rows);
+        res.status(200).json(send.rows);
+    }
+})
+
 //to be filled later
 
 app.post('/Login', async (req, res) => {

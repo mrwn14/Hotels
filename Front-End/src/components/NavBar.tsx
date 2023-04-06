@@ -22,9 +22,9 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
             </Link>
             <div className="flex md:order-2">
                 <Link to={customer? "/":"/Login"}>
-                <Button onClick={handleButton}>{
-                    customer? "Logout" : "Login"
-                }</Button>
+                <Button onClick={handleButton}>
+                    {!customer && !employee ? "Login" : "Logout"}
+                </Button>
                 </Link>
                 <Navbar.Toggle />
                 <div className="mx-5 py-2">{customer? customer.fullname : ""}</div>

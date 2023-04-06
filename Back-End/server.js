@@ -40,6 +40,27 @@ app.get('/EmployeeBookings',async (req, res) => {
     query = "SELECT * FROM booking WHERE hotelid = '" + hotelId +"'";
     console.log(query);
     const send = await pool.query(query + ";");
+    console.log(res.rows);
+    res.json(send.rows);
+})
+app.get('/AvailableRooms',async (req, res) => {
+    params = req.query;
+    let hotelId = params['hotelid'];
+    query = "SELECT room.roomnumber, room.roomid FROM room WHERE room.hotelid = '" + hotelId +"'"+
+                                " AND room.roomid NOT IN (Select booking.roomid from booking where booking.hotelid = '" + hotelId +"')"+ 
+                                " AND room.roomid NOT IN (Select renting.roomid from renting where renting.hotelid = '" + hotelId +"')"
+    console.log(query);
+    const send = await pool.query(query + ";");
+    console.log(res.rows);
+    res.json(send.rows);
+})
+app.get('/EmployeeRentings',async (req, res) => {
+    params = req.query;
+    let hotelId = params['hotelid'];
+    query = "SELECT * FROM renting WHERE hotelid = '" + hotelId +"'";
+    console.log(query);
+    const send = await pool.query(query + ";");
+    console.log(res.rows);
     res.json(send.rows);
 })
 
@@ -64,7 +85,9 @@ app.get('/Hotels', async (req, res) => {
 
 app.get('/HotelBookings/:customerid', async (req, res) => {
     query = "SELECT * FROM booking WHERE customerid = '" + req.params.customerid +"'";
+    console.log(query);
     send = await pool.query(query + ";");
+    console.log(res.rows);
     if (send.rows.length == 0) {
         res.status(404);
     }
@@ -143,6 +166,33 @@ app.post('/Register', async (req, res) => {
     } 
 })
 
+app.post('/CreateRenting', async (req, res) => {
+    //form data
+    let hotelid = req.body.hotelid;
+    let roomid = req.body.roomid;
+    let ssn = req.body.ssn;
+    let employeeid = req.body.employeeid;
+    let checkInValue = req.body.checkInValue;
+    let checkOutValue = req.body.checkOutValue;
+    console.log("HUHFDUSHK");
+    let customerFinderQuery = "SELECT customer.customerid FROM customer where customer.ssn='"+ssn+"';"
+    const queryResult1 = await pool.query(customerFinderQuery);
+    let customerid = queryResult1.rows[0].customerid;
+
+
+    let query = "INSERT INTO Renting VALUES (DEFAULT,'"+hotelid+"','"+roomid+"','"+customerid+"','"+checkInValue+"','"+checkOutValue+"');"
+    console.log(query);
+    const queryResult = await pool.query(query);
+    try {
+        if (queryResult.rows) {
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Error occured.");
+    }
+})
+
+
 app.post('/Book', async (req, res) => {
     //form data
     let customerid = req.body.customerid;
@@ -189,13 +239,25 @@ app.post('/HotelBookings/:id', async (req, res) => {
 //     }
 // })
 
-app.delete('/HotelBookings/:id', async (req, res) => {
+app.delete('/HotelBookings/', async (req, res) => {
     params = req.query;
     let query1 = "INSERT INTO archive VALUES (DEFAULT, true,'"+ params["bookingid"] +"' , '"+params["hotelid"]+"', '"+ params["roomid"]+"', '"+ params["customerid"]+"', '"+ params["bookingdate"]+"', '"+ params["checkindate"]+"', '"+ params["checkoutdate"]+"') RETURNING *"
     console.log(query1);
     const send1 = await pool.query(query1);
     if (send1.rows) {
         let query2 = "DELETE FROM booking WHERE bookingID = '"+ params["bookingid"] + "'"
+        const send2 = await pool.query(query2)
+        res.sendStatus(200);
+    }
+})
+
+app.delete('/HotelRentings/', async (req, res) => {
+    params = req.query;
+    let query1 = "INSERT INTO archive VALUES (DEFAULT, false,'"+ params["rentingid"] +"' , '"+params["hotelid"]+"', '"+ params["roomid"]+"', '"+ params["customerid"]+"',NULL, '"+ params["checkindate"]+"', '"+ params["checkoutdate"]+"') RETURNING *"
+    console.log(query1);
+    const send1 = await pool.query(query1);
+    if (send1.rows) {
+        let query2 = "DELETE FROM renting WHERE rentingid = '"+ params["rentingid"] + "'"
         const send2 = await pool.query(query2)
         res.sendStatus(200);
     }

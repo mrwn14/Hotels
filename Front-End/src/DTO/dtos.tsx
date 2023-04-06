@@ -45,3 +45,11 @@ export interface Booking {
   checkindate: Dayjs,
   checkoutdate: Dayjs
 }
+export interface Renting {
+  rentingid: string,
+  hotelid: string,
+  roomid: string,
+  customerid: string,
+  checkindate: Dayjs,
+  checkoutdate: Dayjs
+}

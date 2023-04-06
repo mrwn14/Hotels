@@ -2,16 +2,17 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import logo from "../media/logo.svg"
 import { Booking } from "../DTO/dtos";
 import { useEffect, useState } from "react";
 import { Button, Container, Grid } from "@mui/material";
 import { getHotelName } from "./Home"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 
-export const EmployeeDashboard = ({ employee }) => {
+export const EmployeeBookings = ({ employee }) => {
+  const [hotels, setHotels] = useState<Booking[]>([]);
 
   const getBookings = () => {
     let url = new URL('http://localhost:4000/EmployeeBookings')
@@ -29,21 +30,9 @@ export const EmployeeDashboard = ({ employee }) => {
       })
   }
 
-  const [hotels, setHotels] = useState<Booking[]>([]);
-  let url = new URL('http://localhost:4000/EmployeeBookings')
-  url.searchParams.append('hotelid', employee.hotelid)
+
   useEffect(() => {
-    fetch(url)
-      .then(response => response.json())
-      .then((data: Booking[]) => {
-        data.map((hotel) => {
-          hotel.hotelid = hotel.hotelid.toString()
-          hotel.customerid = hotel.customerid.toString()
-          console.log(hotel)
-          return hotel
-        })
-        setHotels(data)
-      })
+    getBookings();
   }, [])
   const nav = useNavigate();
   const handleDelete = (hotel: Booking) => {
@@ -58,7 +47,7 @@ export const EmployeeDashboard = ({ employee }) => {
     }
 
     console.log(data)
-    let url = new URL('http://localhost:4000/HotelBookings/' + hotel.hotelid)
+    let url = new URL('http://localhost:4000/HotelBookings/')
     Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
     fetch(url, { method: 'DELETE' })
       .then(response => {
@@ -83,7 +72,6 @@ export const EmployeeDashboard = ({ employee }) => {
       checkindate: hotel.checkindate.toString(),
       checkoutdate: hotel.checkoutdate.toString()
     }
-    let url = new URL('http://localhost:4000/HotelBookings/' + hotel.hotelid)
     axios
       .post("http://localhost:4000/HotelBookings/" + hotel.hotelid, data)
       .then((response) => {
@@ -102,18 +90,15 @@ export const EmployeeDashboard = ({ employee }) => {
   return (
     <>
       <Container>
-        <div className="mx-32 mt-32">
-          <div className=" mb-10 text-center">Bookings</div>
-        </div>
+          <div className=" text-center font-semibold mb-5 text-3xl mt-24">Bookings</div>
       </Container>
-      <Container>
+      <Container maxWidth="md">
         <Grid>
-          {
+          { hotels.length!= 0? 
             hotels.map((hotel) => {
               return (
                 <Accordion >
                   <AccordionSummary
-                    expandIcon={logo}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                     key={hotel.bookingid}
@@ -126,18 +111,24 @@ export const EmployeeDashboard = ({ employee }) => {
                     <Typography
                       className="flex-1"
                     >
-                      This is your booking with id {hotel.bookingid} and room number {hotel.roomid}
+                      Booking of customer {hotel.customerid} with id {hotel.bookingid} and room id {hotel.roomid}
+                      {" hotel from "}
+                      {dayjs(hotel.checkindate).format("LL")} -{" "}
+                      {dayjs(hotel.checkoutdate).format("LL")}
                     </Typography>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      className="h-[3rem] flex-3"
-                      onClick={() => {
-                        handleDelete(hotel);
-                      }}
-                    >
-                      Delete
-                    </Button>
+                    <div className="mx-5">
+                      <Button
+                        variant="contained"
+                        size="large"
+                        className="h-[3rem] flex-3"
+                        onClick={() => {
+                          handleDelete(hotel);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                    
                     <Button
                       variant="contained"
                       size="large"
@@ -153,6 +144,10 @@ export const EmployeeDashboard = ({ employee }) => {
               )
 
             })
+          :
+          <div className="text-center">
+            No bookings for this specific hotel room.
+          </div>
           }
         </Grid>
       </Container>

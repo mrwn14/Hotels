@@ -34,6 +34,16 @@ app.get('/',(req, res) => {
 })
 
 // // ROUTES
+app.get('/View1', async (req, res) =>{
+    query = "Select * from Available_Rooms;"
+    const send = await pool.query(query);
+    res.json(send.rows);
+})
+app.get('/View2', async (req, res) =>{
+    query = "Select * from Hotels_Capacity;"
+    const send = await pool.query(query);
+    res.json(send.rows);
+})
 app.get('/EmployeeBookings',async (req, res) => {
     params = req.query;
     let hotelId = params['hotelid'];

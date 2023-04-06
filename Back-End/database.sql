@@ -94,7 +94,7 @@ CREATE TABLE Archive (
     HotelID CHAR(5) NOT NULL,
     RoomID CHAR(5) NOT NULL,
     CustomerID SERIAL NOT NULL,
-    BookingDate DATE NOT NULL,
+    BookingDate DATE,
     CheckinDate DATE NOT NULL,
     checkoutDate DATE NOT NULL,
     PRIMARY KEY(ArchiveID),
@@ -117,7 +117,9 @@ CREATE TABLE Booking (
     FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID) ON DELETE CASCADE
 );
-
+CREATE TABLE Cities (
+    City varchar(20) NOT NULL unique
+);
 
 /*
 SQL INSERTS
@@ -128,7 +130,7 @@ same area. Each hotel should have at least 5 rooms of different capacity
 */
 
 
-INSERT INTO HotelChain VALUES 
+INSERT INTO HotelChain VALUES
     ('00001','Marriott', '456 Main Ave, Portland, USA 97209', 8, 'contact@marriot.com', '5409823547'),
     ('00002','Hilton', '16 Hawk Lane, Chicago, USA, 39427', 8, 'hello@hilton.com', '6236306193'),
     ('00003','Fairmont', '173 Romane St, New York, USA, 92649', 8, 'fairmont@contact.com', '3432003847'),
@@ -138,7 +140,7 @@ INSERT INTO HotelChain VALUES
 /*
 regex for city : , [a-zA-Z]*( [a-zA-Z]*)*, USA
 */
-INSERT INTO Hotel VALUES 
+INSERT INTO Hotel VALUES
     ('11001', '00001', 3, 50, '123 Main St, Springfield, USA 62704', 'contactspring@marriot.com', '5551234567'),
     ('11002', '00001', 4, 100, '456 Oak Ave, Portland, USA 97209', 'contactoak@marriot.com', '5552345678'),
     ('11003', '00001', 2, 25, '789 Elm St, Charleston, USA 29403', 'contactelm@marriot.com', '5553456789'),
@@ -186,7 +188,7 @@ INSERT INTO Hotel VALUES
 
 
 
-INSERT INTO Room VALUES 
+INSERT INTO Room VALUES
 -- HotelChain 00001
 -- Hotel 11001
     ('20001', '11001', 100, 150, 'TV, WiFi, minibar', 2, true, false, true, false),
@@ -236,7 +238,7 @@ INSERT INTO Room VALUES
     ('20038', '11008', 300, 110, 'Air conditioning, TV', 1, false, true, false, false),
     ('20039', '11008', 400, 250, 'Air conditioning, TV', 2, true, false, true, false),
     ('20040', '11008', 500, 90, 'Air conditioning, TV', 1, false, false, false, false),
-    
+
 -- HotelChain 00002
 -- Hotel 12001
     ('20101', '12001', 100, 150, 'TV, WiFi, minibar', 2, true, false, true, false),
@@ -437,14 +439,40 @@ INSERT INTO Room VALUES
     ('20439', '15008', 400, 250, 'Air conditioning, TV', 2, true, false, true, false),
     ('20440', '15008', 500, 90, 'Air conditioning, TV', 1, false, false, false, false);
 
-
-INSERT INTO positions VALUES 
+INSERT INTO Cities VALUES
+  ('Atlanta'),
+  ('Austin'),
+  ('Beverly Hills'),
+  ('Boston'),
+  ('Charleston'),
+  ('Chicago'),
+  ('Denver'),
+  ('Hollywood'),
+  ('Los Angeles'),
+  ('Miami'),
+  ('New York'),
+  ('Philadelphia'),
+  ('Portland'),
+  ('San Diego'),
+  ('San Francisco'),
+  ('Seattle'),
+  ('Sherman Oaks'),
+  ('Springfield'),
+  ('Santa Monica'),
+  ('Pasadena'),
+  ('Burbank'),
+  ('Malibu'),
+  ('Chatsworth'),
+  ('Downey'),
+  ('Santa Clarita'),
+  ('San Pedro');
+INSERT INTO positions VALUES
 ('00001', 'clerk'),
-('00002', 'receptionist'), 
-('00003', 'developer'), 
-('00004', 'house keeper'), 
-('00005', 'manager'), 
-('00006', 'HR represantative'); 
+('00002', 'receptionist'),
+('00003', 'developer'),
+('00004', 'house keeper'),
+('00005', 'manager'),
+('00006', 'HR represantative');
 
 INSERT INTO employee VALUES
 ('00001',  'employee1@admin.com', '12345', '00001', '15008', 'raj tajmahal', '155 stewart street', 563349846),
@@ -456,6 +484,25 @@ INSERT INTO employee VALUES
 ('00007',  'employee7@admin.com', '12345', '00003', '15002', 'raj tajmahal', '155 stewart street', 563349846),
 ('00008',  'employee8@admin.com', '12345', '00002', '15001', 'raj tajmahal', '155 stewart street', 563349846),
 ('00009',  'employee9@admin.com', '12345', '00002', '14008', 'raj tajmahal', '155 stewart street', 563349846),
-('00010',  'employee10@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349846);
+('00010',  'employee10@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349846),
+('00011',  'employee10@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349846);
 
-DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain;
+CREATE VIEW Available_Rooms AS
+    Select subView2.City as id, count(*) as numRoomsAvailable from
+        (Select * from
+            ((room natural join hotel) left join Cities on Address LIKE concat('%',Cities.City,'%')) as subView1
+                where subView1.RoomID not in (select booking.roomid from booking)
+                AND subView1.RoomID not in (select booking.roomid from booking)
+        )
+        as subView2 group by subView2.City;
+
+CREATE VIEW Hotels_Capacity AS
+    Select subView2.Name, subView2.address as id, sum(subView2.Capacity) as capacity from
+    (SELECT * from
+        ((room natural join hotel) left join hotelchain on Hotel.ChainID = HotelChain.ChainID) as subview1
+            where subView1.RoomID not in (select booking.roomid from booking)
+            AND subView1.RoomID not in (select booking.roomid from booking)
+    )
+    as subView2 group by subView2.address, subView2.name ;
+
+DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities;

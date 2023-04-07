@@ -273,6 +273,40 @@ app.delete('/HotelRentings/', async (req, res) => {
     }
 })
 
+
+app.patch('/UpdateCustomer', async (req, res) => {
+    //form data
+    let email = req.body.email;
+    let password = req.body.password;
+    let fullname = req.body.fullname;
+    let ssn = req.body.ssn;
+    let address = req.body.address;
+    let customerid = req.body.customerid;
+    let query = "Update customer set email = '"+email+
+                                            "', password ='"+ password+
+                                            "', fullname ='"+ fullname+
+                                            "', address ='"+ address+
+                                            "', ssn ='"+ ssn+
+                                            "' where customerid = "+customerid+";"
+    let queryResult;
+    console.log(query);
+    try {
+        queryResult = await pool.query(query + ";");
+    } catch (error) {
+        console.log("Insertion failed.");
+    }
+
+    try {
+        if (queryResult.rows) {
+
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Invalid data, couldn't update");
+    }
+})
+
+
 app.listen(4000, () => {
     console.log('Server is running on port 4000');
 });

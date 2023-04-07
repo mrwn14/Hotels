@@ -10,11 +10,11 @@ x Priority
 // sql //
 3 - Look into triggers (q6)
 2 - Look into indexes (q7)
-1 - Look into sql views (q9)
+1 - Look into sql views (q9) - DONE
 
 // UI //
 4 -  Page to update user information (q8)
-1 - Page for the 2 views (q9)
+1 - Page for the 2 views (q9) - DONE
 5 - Add super admin, he has 4 pages, UpdateRoom, UpdateHotel. 
 for each of them, he is prompted with the id, then he can input data in the form and press submit 
 depending on the data entered, it will be used to update the db

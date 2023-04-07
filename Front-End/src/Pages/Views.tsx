@@ -3,14 +3,19 @@ import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+interface view1Data {
+    id: string,
+    numroomsavailable: number,
+}
+
 export const Views = () => {
-    const [view1, setView1] = useState();
+    const [view1, setView1] = useState<view1Data[]>();
     const [view2, setView2] = useState();
     const [viewSelection, setViewSelection] = useState<number>();
 
     const getViews = () => {
         axios.get("http://localhost:4000/View1").then((data) => {
-            setView1(data.data);
+            setView1(data.data as view1Data[]);
         });
         axios.get("http://localhost:4000/View2").then((data) => {
             setView2(data.data);
@@ -32,10 +37,7 @@ export const Views = () => {
     const handleViewChange = (event: SelectChangeEvent) => {
         setViewSelection(event.target.value as unknown as number);
     };
-    console.log(view1);
-    console.log(view2);
-    console.log(viewSelection);
-
+    
     return (
         <Container maxWidth="lg" className="mt-16 mb-20">
             <Grid

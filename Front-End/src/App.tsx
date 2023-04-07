@@ -13,6 +13,7 @@ import { Bookings } from "./Pages/Bookings";
 import { EmployeeRentings } from "./Pages/EmployeeRentings";
 import { CreateRenting } from "./Pages/CreateRenting";
 import { Views } from "./Pages/Views";
+import { Update } from "./Pages/Update";
 
 function App() {
     const [customer, setCustomer] = useState<Customer | undefined>(undefined);
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/login" element={<Login customer={customer} setCustomer={setCustomer} employee={employee} setEmployee={setEmployee}/>}></Route>
                 <Route path="/Register" element={<Register customer={customer} setCustomer={setCustomer}/>}></Route>
                 <Route path="/Bookings" element={<Bookings customer={customer}/>}></Route>
+                <Route path="/Update" element={<Update customer={customer}/>}></Route>
                 <Route path="/Views" element={<Views/>}></Route>
                 <Route path="/Rentings" element={<EmployeeRentings employee={employee}/>}></Route>
                 <Route path="/CreateRenting" element={<CreateRenting employee={employee}/>}></Route>

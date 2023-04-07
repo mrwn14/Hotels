@@ -53,3 +53,12 @@ export interface Renting {
   checkindate: Dayjs,
   checkoutdate: Dayjs
 }
+export interface Hotel{
+  hotelid: string,
+  chainid: string,
+  category: string,
+  numofrooms: string,
+  address: string,
+  contactemail: string,
+  phonenumber: string
+}

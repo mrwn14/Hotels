@@ -2,10 +2,10 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import { Booking } from "../DTO/dtos";
+import { Booking } from "../../DTO/dtos";
 import { useEffect, useState } from "react";
 import { Button, Container, Grid } from "@mui/material";
-import { getHotelName } from "./Home"
+import { getHotelName } from "../Customer Pages/Home"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";

@@ -93,7 +93,17 @@ app.get('/Hotels', async (req, res) => {
         console.log(err);
     }
 })
-
+app.get('/Hotel/:id', async (req, res) => {
+    try {
+        query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
+        console.log(query);
+        const send = await pool.query(query +";");
+        res.json(send.rows);
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
 app.get('/Customer/:id', async (req, res) => {
     query = "SELECT * FROM customer WHERE customer.customerid = '" + req.params.id +"'";
     console.log(query);
@@ -250,18 +260,7 @@ app.post('/HotelBookings/:id', async (req, res) => {
         res.sendStatus(200);
     }
 })
-//Kept for future reference 
 
-// app.get('/Hotels/:id', async (req, res) => {
-//     try {
-//         query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
-//         const send = await pool.query(query +";");
-//         res.json(send.rows);
-//     }
-//     catch (err) {
-//         console.log(err);
-//     }
-// })
 
 // Delete requests
 app.delete('/HotelBookings/', async (req, res) => {
@@ -325,6 +324,9 @@ app.patch('/UpdateEmployee', async (req, res) => {
     //form data
     let employeeid = req.body.employeeid;
     let email = req.body.email;
+    if(!employeeChecker(email)){
+        res.status(404).json("Invalid email, should have @admin.com to work.")
+    }
     let password = req.body.password;
     let positionid = req.body.positionid;
     let hotelid = req.body.hotelid;
@@ -339,6 +341,42 @@ app.patch('/UpdateEmployee', async (req, res) => {
                                             "', address ='"+ address+
                                             "', ssn ='"+ ssn+
                                             "' where employeeid = '"+employeeid+"';"
+    let queryResult;
+    console.log(query);
+    try {
+        queryResult = await pool.query(query + ";");
+    } catch (error) {
+        console.log("Insertion failed.");
+    }
+
+    try {
+        if (queryResult.rows) {
+
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Invalid data, couldn't update");
+    }
+})
+
+app.patch('/UpdateHotel', async (req, res) => {
+    //form data
+    let hotelid = req.body.hotelid;
+    let chainid = req.body.chainid;
+    let category= req.body.category;
+    let contactemail = req.body.contactemail;
+    let address = req.body.address;
+    let phonenumber = req.body.phonenumber;
+    let numofrooms = req.body.numofrooms;
+
+    let query = "Update hotel set contactemail = '"+contactemail+
+                                            "', chainid ='"+ chainid+
+                                            "', category = '"+category+
+                                            "', numofrooms = '"+ numofrooms+
+                                            "', address ='"+ address+
+                                            "', phonenumber ='"+ phonenumber+
+                                            "', hotelid ='"+ hotelid+
+                                            "' where hotelid = '"+hotelid+"';"
     let queryResult;
     console.log(query);
     try {

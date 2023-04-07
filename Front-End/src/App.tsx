@@ -4,17 +4,10 @@ import { Route, Routes } from "react-router";
 import "./App.css";
 import { NavBar } from "./components/NavBar";
 import { Customer, Employee } from "./DTO/dtos";
-import { Home } from "./Pages/Home";
-import { Login } from "./Pages/Login";
-import { Register } from "./Pages/Register";
-import { EmployeeBookings } from "./Pages/EmployeeBookings";
-import { HotelView } from "./Pages/HotelView";
-import { Bookings } from "./Pages/Bookings";
-import { EmployeeRentings } from "./Pages/EmployeeRentings";
-import { CreateRenting } from "./Pages/CreateRenting";
-import { Views } from "./Pages/Views";
-import { CustomerUpdate } from "./Pages/CustomerUpdate";
-import { EmployeeUpdate } from "./Pages/EmployeeUpdate";
+import { Login } from "./Pages/Common Pages/Login";
+import { Register } from "./Pages/Common Pages/Register";
+import { EmployeeBookings, EmployeeRentings, EmployeeUpdate, CreateRenting, HotelUpdate } from "./Pages/Employee Pages/index";
+import { HotelView, Bookings, Views, Home, CustomerUpdate} from "./Pages/Customer Pages/index";
 
 function App() {
     const [customer, setCustomer] = useState<Customer | undefined>(undefined);
@@ -27,11 +20,12 @@ function App() {
                 <Route path="/login" element={<Login customer={customer} setCustomer={setCustomer} employee={employee} setEmployee={setEmployee}/>}></Route>
                 <Route path="/Register" element={<Register customer={customer} setCustomer={setCustomer}/>}></Route>
                 <Route path="/Bookings" element={<Bookings customer={customer}/>}></Route>
-                <Route path="/CustomerUpdate" element={<CustomerUpdate customer={customer}/>}></Route>
-                <Route path="/EmployeeUpdate" element={<EmployeeUpdate employee={employee}/>}></Route>
+                <Route path="/CustomerUpdate" element={<CustomerUpdate customer={customer} setCustomer={setCustomer}/>}></Route>
+                <Route path="/EmployeeUpdate" element={<EmployeeUpdate employee={employee} setEmployee={setEmployee}/>}></Route>
                 <Route path="/Views" element={<Views/>}></Route>
                 <Route path="/Rentings" element={<EmployeeRentings employee={employee}/>}></Route>
                 <Route path="/CreateRenting" element={<CreateRenting employee={employee}/>}></Route>
+                <Route path="/HotelUpdate" element={<HotelUpdate employee={employee}/>}></Route>
                 <Route path="/HotelDetails/:extendable/:damages/:mountain/:sea/:address/:fullAddress/:hotelid/:hotelChain/:rating/:price/:amenities/:checkInValue/:checkOutValue/:capacity/:roomid/:customerid" element={<HotelView customer={customer}/>}></Route>            
                 
             </Routes>

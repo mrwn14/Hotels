@@ -1,4 +1,4 @@
-import { NavBar } from "../components/NavBar";
+import { NavBar } from "../../components/NavBar";
 import dayjs, { Dayjs } from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -17,9 +17,9 @@ import {
     Button,
 } from "@mui/material";
 import { useState, ChangeEvent } from "react";
-import { cities, hotelChains } from "../data/data";
-import { Room } from "../DTO/dtos";
-import { HotelCard } from "../components/HotelCard";
+import { cities, hotelChains } from "../../data/data";
+import { Room } from "../../DTO/dtos";
+import { HotelCard } from "../../components/HotelCard";
 export const getHotelName = (id : string) : string => {
     switch (id.charAt(1)) {
         case "1":

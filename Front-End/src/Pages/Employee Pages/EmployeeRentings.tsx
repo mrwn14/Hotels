@@ -3,10 +3,10 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import logo from "../media/logo.svg"
-import { Renting } from "../DTO/dtos";
+import { Renting } from "../../DTO/dtos";
 import { useEffect, useState } from "react";
 import { Button, Container, Grid } from "@mui/material";
-import { getHotelName } from "./Home"
+import { getHotelName } from "../Customer Pages/Home"
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 

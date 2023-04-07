@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
-import { Booking } from "../DTO/dtos";
+import { Booking } from "../../DTO/dtos";
 import { useNavigate } from "react-router-dom";
 import { getHotelName } from "./Home";
 import { Container } from "@mui/system";

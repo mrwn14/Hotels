@@ -56,7 +56,7 @@ export const Views = () => {
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={viewSelection}
+                                value={viewSelection as string|undefined}
                                 label="capacity"
                                 onChange={handleViewChange}
                             >

@@ -2,7 +2,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { Customer } from "../DTO/dtos";
+import { Customer } from "../../DTO/dtos";
 
 export const Register = ({ customer, setCustomer }) => {
     const emailRef = useRef<HTMLInputElement>(null);

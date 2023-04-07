@@ -21,7 +21,7 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
                 </Navbar.Brand>
             </Link>
             <div className="flex md:order-2">
-                <Link to={customer? "/":"/Login"}>
+                <Link to={customer? "/":"/Login"} className="mx-3">
                 <Button onClick={handleButton}>
                     {!customer && !employee ? "Login" : "Logout"}
                 </Button>
@@ -33,17 +33,18 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
             <Navbar.Collapse>
                 {customer && 
                     <>
-                        <Navbar.Link href=""> <Link to={"/"}>Home</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/Bookings"}>Bookings</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/Views"}>Views</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/CustomerUpdate"}>Update Account</Link> </Navbar.Link>
+                         <Link to={"/"}><Navbar.Link href="">Home</Navbar.Link></Link> 
+                         <Link to={"/Bookings"}><Navbar.Link href=""> Bookings </Navbar.Link></Link>
+                         <Link to={"/Views"}><Navbar.Link href=""> Views</Navbar.Link></Link> 
+                         <Link to={"/CustomerUpdate"}><Navbar.Link href=""> Update Account</Navbar.Link></Link> 
                     </>
                 }
                 {employee && 
                     <>
-                        <Navbar.Link href=""> <Link to={"/"}>Bookings</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/Rentings"}>Rentings</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/EmployeeUpdate"}>Update Account</Link> </Navbar.Link>
+                        <Link to={"/"}><Navbar.Link href=""> Bookings </Navbar.Link></Link>
+                        <Link to={"/Rentings"}><Navbar.Link href=""> Rentings </Navbar.Link></Link>
+                        <Link to={"/EmployeeUpdate"}><Navbar.Link href=""> Update Account </Navbar.Link></Link>
+                        <Link to={"/HotelUpdate"}><Navbar.Link href=""> Update Hotel</Navbar.Link></Link>
                     </>
                 }
             </Navbar.Collapse>

@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import * as React from "react";
 import { useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { Customer, Employee } from "../DTO/dtos";
+import { Customer, Employee } from "../../DTO/dtos";
 
 export const Login = ({customer, setCustomer, employee, setEmployee}) => {
     const emailRef = useRef<HTMLInputElement>(null);

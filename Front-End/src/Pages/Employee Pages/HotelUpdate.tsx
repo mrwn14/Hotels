@@ -59,7 +59,7 @@ export const HotelUpdate = ({employee}: Props) => {
         axios
             .patch("http://localhost:4000/UpdateHotel", data)
             .then((response) => {
-                alert("Your account has been updated");
+                alert("The hotel information has been updated");
                 nav("/")
             })
             .catch((error) => {

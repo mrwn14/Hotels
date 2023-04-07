@@ -69,7 +69,7 @@ export const RoomUpdate = ({employee}: Props) => {
         axios
             .patch("http://localhost:4000/UpdateRoom", data)
             .then((response) => {
-                alert("Your account has been updated");
+                alert("The room informatiom has been updated");
                 nav("/")
             })
             .catch((error) => {
@@ -109,7 +109,7 @@ export const RoomUpdate = ({employee}: Props) => {
                     <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mt-16">
                         <div className="p-6 space-y-4 md:space-y-6 sm:p-8 ">
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
-                                <u>Update Hotel info</u>
+                                <u>Update Room info</u>
                             </h1>
                             <form
                                 className="space-y-4 md:space-y-6"

@@ -49,24 +49,24 @@ CREATE TABLE Positions (
 
 CREATE TABLE Customer (
     CustomerID SERIAL NOT NULL,
-    Email VARCHAR(40) NOT NULL,
+    Email VARCHAR(40) NOT NULL UNIQUE,
     Password VARCHAR(40) NOT NULL,
     FullName VARCHAR(40) NOT NULL,
     Address VARCHAR(50) NOT NULL,
-    SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ),
+    SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ) UNIQUE,
     DateOfRegistration DATE NOT NULL,
     PRIMARY KEY(CustomerID)
 );
 
 CREATE TABLE Employee (
     EmployeeID CHAR(5) NOT NULL,
-    Email VARCHAR(40) NOT NULL,
+    Email VARCHAR(40) NOT NULL UNIQUE ,
     Password VARCHAR(40) NOT NULL,
     PositionID CHAR(5) NOT NULL,
     HotelID CHAR(5) NOT NULL,
     FullName VARCHAR(40) NOT NULL,
     Address VARCHAR(50) NOT NULL,
-    SSN NUMERIC(9) NOT NULL,
+    SSN NUMERIC(9) NOT NULL UNIQUE ,
     PRIMARY KEY (EmployeeID),
     FOREIGN KEY (PositionID) REFERENCES Positions(PositionID) ON DELETE CASCADE,
     FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE

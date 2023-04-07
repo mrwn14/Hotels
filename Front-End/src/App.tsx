@@ -6,7 +6,7 @@ import { NavBar } from "./components/NavBar";
 import { Customer, Employee } from "./DTO/dtos";
 import { Login } from "./Pages/Common Pages/Login";
 import { Register } from "./Pages/Common Pages/Register";
-import { EmployeeBookings, EmployeeRentings, EmployeeUpdate, CreateRenting, HotelUpdate } from "./Pages/Employee Pages/index";
+import { EmployeeBookings, EmployeeRentings, EmployeeUpdate, CreateRenting, HotelUpdate, RoomUpdate } from "./Pages/Employee Pages/index";
 import { HotelView, Bookings, Views, Home, CustomerUpdate} from "./Pages/Customer Pages/index";
 
 function App() {
@@ -26,6 +26,7 @@ function App() {
                 <Route path="/Rentings" element={<EmployeeRentings employee={employee}/>}></Route>
                 <Route path="/CreateRenting" element={<CreateRenting employee={employee}/>}></Route>
                 <Route path="/HotelUpdate" element={<HotelUpdate employee={employee}/>}></Route>
+                <Route path="/RoomUpdate" element={<RoomUpdate employee={employee}/>}></Route>
                 <Route path="/HotelDetails/:extendable/:damages/:mountain/:sea/:address/:fullAddress/:hotelid/:hotelChain/:rating/:price/:amenities/:checkInValue/:checkOutValue/:capacity/:roomid/:customerid" element={<HotelView customer={customer}/>}></Route>            
                 
             </Routes>

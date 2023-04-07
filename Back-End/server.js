@@ -104,6 +104,17 @@ app.get('/Hotel/:id', async (req, res) => {
         console.log(err);
     }
 })
+app.get('/Room/:id', async (req, res) => {
+    try {
+        query = "SELECT * FROM room WHERE hotelID = '"+req.params.id +"'";
+        console.log(query);
+        const send = await pool.query(query +";");
+        res.json(send.rows);
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
 app.get('/Customer/:id', async (req, res) => {
     query = "SELECT * FROM customer WHERE customer.customerid = '" + req.params.id +"'";
     console.log(query);
@@ -395,6 +406,47 @@ app.patch('/UpdateHotel', async (req, res) => {
     }
 })
 
+app.patch('/UpdateRoom', async (req, res) => {
+    //form data
+    let roomid = req.body.roomid;
+    let hotelid = req.body.hotelid;
+    let roomnumber = req.body.roomnumber;
+    let price= req.body.price;
+    let amenities = req.body.amenities;
+    let capacity = req.body.capacity;
+    let seaview = req.body.seaview;
+    let mountainview = req.body.mountainview;
+    let extendable = req.body.extendable;
+    let damages = req.body.damages;
+
+    let query = "Update room set roomid = '"+roomid+
+                                            "', hotelid ='"+ hotelid+
+                                            "', roomnumber = '"+roomnumber+
+                                            "', price = '"+ price+
+                                            "', amenities ='"+ amenities+
+                                            "', capacity ='"+ capacity+
+                                            "', seaview ='"+ seaview+
+                                            "', mountainview ='"+ mountainview+
+                                            "', extendable ='"+ extendable+
+                                            "', damages ='"+ damages+
+                                            "' where roomid = '"+roomid+"';"
+    let queryResult;
+    console.log(query);
+    try {
+        queryResult = await pool.query(query + ";");
+    } catch (error) {
+        console.log("Insertion failed.");
+    }
+
+    try {
+        if (queryResult.rows) {
+
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Invalid data, couldn't update");
+    }
+})
 
 app.listen(4000, () => {
     console.log('Server is running on port 4000');

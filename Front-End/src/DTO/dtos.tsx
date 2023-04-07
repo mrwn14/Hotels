@@ -3,7 +3,7 @@ import { Dayjs } from "dayjs";
 export interface Room {
     roomid: string;
     hotelid: string;
-    roomNumber: number;
+    roomnumber: number;
     hotelName?: string;
     category: number;
     address: string;

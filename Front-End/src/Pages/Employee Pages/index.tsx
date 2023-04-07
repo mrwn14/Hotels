@@ -3,3 +3,4 @@ export {EmployeeBookings} from './EmployeeBookings';
 export {EmployeeRentings} from './EmployeeRentings';
 export {EmployeeUpdate} from './EmployeeUpdate';
 export {HotelUpdate} from './HotelUpdate';
+export {RoomUpdate} from './RoomUpdate'

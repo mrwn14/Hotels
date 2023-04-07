@@ -45,6 +45,7 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
                         <Link to={"/Rentings"}><Navbar.Link href=""> Rentings </Navbar.Link></Link>
                         <Link to={"/EmployeeUpdate"}><Navbar.Link href=""> Update Account </Navbar.Link></Link>
                         <Link to={"/HotelUpdate"}><Navbar.Link href=""> Update Hotel</Navbar.Link></Link>
+                        <Link to={"/RoomUpdate"}><Navbar.Link href=""> Update Room</Navbar.Link></Link>
                     </>
                 }
             </Navbar.Collapse>

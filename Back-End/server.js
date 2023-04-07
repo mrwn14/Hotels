@@ -34,6 +34,7 @@ app.get('/',(req, res) => {
 })
 
 // // ROUTES
+// Get requests
 app.get('/View1', async (req, res) =>{
     query = "Select * from Available_Rooms;"
     const send = await pool.query(query);
@@ -93,6 +94,20 @@ app.get('/Hotels', async (req, res) => {
     }
 })
 
+app.get('/Customer/:id', async (req, res) => {
+    query = "SELECT * FROM customer WHERE customer.customerid = '" + req.params.id +"'";
+    console.log(query);
+    send = await pool.query(query + ";");
+    res.json(send.rows);
+})
+
+app.get('/Employee/:id', async (req, res) => {
+    query = "SELECT * FROM employee WHERE employee.employeeid = '" + req.params.id +"'";
+    console.log(query);
+    send = await pool.query(query + ";");
+    res.json(send.rows);
+})
+
 app.get('/HotelBookings/:customerid', async (req, res) => {
     query = "SELECT * FROM booking WHERE customerid = '" + req.params.customerid +"'";
     console.log(query);
@@ -107,8 +122,7 @@ app.get('/HotelBookings/:customerid', async (req, res) => {
     }
 })
 
-//to be filled later
-
+// Post requests
 app.post('/Login', async (req, res) => {
     //form data
     let email = req.body.email;
@@ -249,6 +263,7 @@ app.post('/HotelBookings/:id', async (req, res) => {
 //     }
 // })
 
+// Delete requests
 app.delete('/HotelBookings/', async (req, res) => {
     params = req.query;
     let query1 = "INSERT INTO archive VALUES (DEFAULT, true,'"+ params["bookingid"] +"' , '"+params["hotelid"]+"', '"+ params["roomid"]+"', '"+ params["customerid"]+"', '"+ params["bookingdate"]+"', '"+ params["checkindate"]+"', '"+ params["checkoutdate"]+"') RETURNING *"
@@ -273,7 +288,7 @@ app.delete('/HotelRentings/', async (req, res) => {
     }
 })
 
-
+// Patch requests
 app.patch('/UpdateCustomer', async (req, res) => {
     //form data
     let email = req.body.email;
@@ -288,6 +303,42 @@ app.patch('/UpdateCustomer', async (req, res) => {
                                             "', address ='"+ address+
                                             "', ssn ='"+ ssn+
                                             "' where customerid = "+customerid+";"
+    let queryResult;
+    console.log(query);
+    try {
+        queryResult = await pool.query(query + ";");
+    } catch (error) {
+        console.log("Insertion failed.");
+    }
+
+    try {
+        if (queryResult.rows) {
+
+            res.status(200).send(queryResult.rows);
+        }
+    } catch (error) {
+        res.status(404).json("Invalid data, couldn't update");
+    }
+})
+
+app.patch('/UpdateEmployee', async (req, res) => {
+    //form data
+    let employeeid = req.body.employeeid;
+    let email = req.body.email;
+    let password = req.body.password;
+    let positionid = req.body.positionid;
+    let hotelid = req.body.hotelid;
+    let fullname = req.body.fullname;
+    let address = req.body.address;
+    let ssn = req.body.ssn;
+    let query = "Update employee set email = '"+email+
+                                            "', password ='"+ password+
+                                            "', positionid = '"+positionid+
+                                            "', hotelid = '"+ hotelid+
+                                            "', fullname ='"+ fullname+
+                                            "', address ='"+ address+
+                                            "', ssn ='"+ ssn+
+                                            "' where employeeid = '"+employeeid+"';"
     let queryResult;
     console.log(query);
     try {

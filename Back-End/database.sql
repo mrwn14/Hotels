@@ -505,4 +505,4 @@ CREATE VIEW Hotels_Capacity AS
     )
     as subView2 group by subView2.address, subView2.name ;
 
-DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities;
+-- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities;

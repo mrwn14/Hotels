@@ -146,7 +146,7 @@ export const EmployeeBookings = ({ employee }) => {
             })
           :
           <div className="text-center">
-            No bookings for this specific hotel room.
+            No bookings yet.
           </div>
           }
         </Grid>

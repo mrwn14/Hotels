@@ -36,13 +36,14 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
                         <Navbar.Link href=""> <Link to={"/"}>Home</Link> </Navbar.Link>
                         <Navbar.Link href=""> <Link to={"/Bookings"}>Bookings</Link> </Navbar.Link>
                         <Navbar.Link href=""> <Link to={"/Views"}>Views</Link> </Navbar.Link>
-                        <Navbar.Link href=""> <Link to={"/Update"}>Update Account</Link> </Navbar.Link>
+                        <Navbar.Link href=""> <Link to={"/CustomerUpdate"}>Update Account</Link> </Navbar.Link>
                     </>
                 }
                 {employee && 
                     <>
                         <Navbar.Link href=""> <Link to={"/"}>Bookings</Link> </Navbar.Link>
                         <Navbar.Link href=""> <Link to={"/Rentings"}>Rentings</Link> </Navbar.Link>
+                        <Navbar.Link href=""> <Link to={"/EmployeeUpdate"}>Update Account</Link> </Navbar.Link>
                     </>
                 }
             </Navbar.Collapse>

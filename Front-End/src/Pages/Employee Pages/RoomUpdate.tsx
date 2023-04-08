@@ -40,6 +40,12 @@ export const RoomUpdate = ({employee}: Props) => {
                 return response.json();
             })
             .then((data) => {
+                let k: Room[] = data;                
+                k.sort((a,b)=> {
+                    if(a.roomnumber> b.roomnumber) return 1;
+                    if(a.roomnumber< b.roomnumber) return -1;
+                    else return 0;
+                })
                 setRooms(data);
             });
     };

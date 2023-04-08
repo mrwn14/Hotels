@@ -30,7 +30,6 @@ export interface Employee {
   employeeid: string;
   email : string;
   password: string;
-  positionid: string;
   hotelid: string,
   fullname: string;
   address: string;

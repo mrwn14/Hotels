@@ -5,20 +5,20 @@ SQL DDL's USED TO CREATE THE TABLES
 */
 
 CREATE TABLE HotelChain (
-                            ChainID CHAR(5) NOT NULL,
+                            ChainID CHAR(5) NOT NULL UNIQUE,
                             Name VARCHAR(40) NOT NULL,
                             OfficeAddress VARCHAR(50) NOT NULL,
-                            NumberOfHotels NUMERIC NOT NULL,
-                            ContactEmail VARCHAR(40) NOT NULL,
-                            PhoneNumber CHAR(10) NOT NULL,
+                            NumberOfHotels NUMERIC check (NumberOfHotels >= 0)  NOT NULL,
+                            ContactEmail VARCHAR(40) NOT NULL UNIQUE,
+                            PhoneNumber CHAR(10) NOT NULL UNIQUE,
                             PRIMARY KEY(ChainID)
 );
 
 CREATE TABLE Hotel (
-                       HotelID CHAR(5) NOT NULL,
+                       HotelID CHAR(5) NOT NULL UNIQUE,
                        ChainID CHAR(5) NOT NULL,
-                       Category INTEGER constraint max_length check ( Category<=5 ) NOT NULL,
-                       NumOfRooms NUMERIC NOT NULL,
+                       Category INTEGER check ( Category<=5 ) NOT NULL,
+                       NumOfRooms NUMERIC check (NumOfRooms >= 0)  NOT NULL,
                        Address VARCHAR(50) NOT NULL,
                        ContactEmail VARCHAR(40) NOT NULL,
                        PhoneNumber CHAR(10) NOT NULL,
@@ -27,12 +27,12 @@ CREATE TABLE Hotel (
 );
 
 CREATE TABLE Room (
-                      RoomID CHAR(5) NOT NULL,
+                      RoomID CHAR(5) NOT NULL UNIQUE,
                       HotelID CHAR(5) NOT NULL,
                       RoomNumber NUMERIC(20) NOT NULL,
-                      Price NUMERIC(20) NOT NULL,
+                      Price NUMERIC(20) NOT NULL check (Price >= 0)  NOT NULL,
                       Amenities VARCHAR(100) NOT NULL,
-                      Capacity NUMERIC(20) NOT NULL,
+                      Capacity NUMERIC(20) NOT NULL check (Price > 0)  NOT NULL,
                       SeaView BOOLEAN NOT NULL,
                       MountainView BOOLEAN NOT NULL,
                       Extendable BOOLEAN NOT NULL,
@@ -42,44 +42,48 @@ CREATE TABLE Room (
 );
 
 CREATE TABLE Positions (
-                           PositionID CHAR(5) NOT NULL,
+                           PositionID CHAR(5) NOT NULL UNIQUE,
                            PositionName VARCHAR(40) NOT NULL,
                            PRIMARY KEY (PositionID)
 );
 
 CREATE TABLE Customer (
-                          CustomerID SERIAL NOT NULL,
+                          CustomerID SERIAL NOT NULL UNIQUE,
                           Email VARCHAR(40) NOT NULL UNIQUE,
                           Password VARCHAR(40) NOT NULL,
                           FullName VARCHAR(40) NOT NULL,
                           Address VARCHAR(50) NOT NULL,
-                          SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ) UNIQUE,
+                          SSN CHAR(9) NOT NULL  CHECK( length(SSN)=9 ) UNIQUE,
                           DateOfRegistration DATE NOT NULL,
                           PRIMARY KEY(CustomerID)
 );
 
 CREATE TABLE Employee (
-                          EmployeeID CHAR(5) NOT NULL,
-                          Email VARCHAR(40) NOT NULL UNIQUE ,
+                          EmployeeID CHAR(5) NOT NULL UNIQUE ,
+                          Email VARCHAR(40) NOT NULL  ,
                           Password VARCHAR(40) NOT NULL,
-                          PositionID CHAR(5) NOT NULL,
                           HotelID CHAR(5) NOT NULL,
                           FullName VARCHAR(40) NOT NULL,
                           Address VARCHAR(50) NOT NULL,
-                          SSN NUMERIC(9) NOT NULL UNIQUE ,
+                          SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ) ,
                           PRIMARY KEY (EmployeeID),
-                          FOREIGN KEY (PositionID) REFERENCES Positions(PositionID) ON DELETE CASCADE,
                           FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE
 
 );
-
+CREATE TABLE EmployeePosition (
+                                  EmployeeID CHAR(5) NOT NULL,
+                                  PositionID CHAR(5) NOT NULL,
+                                  PRIMARY KEY (EmployeeID, PositionID),
+                                  FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID) ON DELETE CASCADE,
+                                  FOREIGN KEY (PositionID) REFERENCES Positions(PositionID) ON DELETE CASCADE
+);
 CREATE TABLE Renting (
-                         RentingID SERIAL NOT NULL,
+                         RentingID SERIAL NOT NULL UNIQUE ,
                          HotelID CHAR(5) NOT NULL,
                          RoomID CHAR(5) NOT NULL,
                          CustomerID SERIAL NOT NULL,
                          CheckinDate DATE NOT NULL,
-                         checkoutDate DATE NOT NULL,
+                         CheckoutDate DATE NOT NULL  check ( CheckoutDate > CheckinDate ),
                          PRIMARY KEY(RentingID),
                          FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
                          FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
@@ -88,15 +92,15 @@ CREATE TABLE Renting (
 
 
 CREATE TABLE Archive (
-                         ArchiveID SERIAL NOT NULL,
+                         ArchiveID SERIAL NOT NULL UNIQUE ,
                          IsBooking BOOLEAN NOT NULL,
                          ArchivedID CHAR(5) NOT NULL,
                          HotelID CHAR(5) NOT NULL,
                          RoomID CHAR(5) NOT NULL,
                          CustomerID SERIAL NOT NULL,
-                         BookingDate DATE,
+                         BookingDate DATE, --can be null since rentings don't have booking dates
                          CheckinDate DATE NOT NULL,
-                         checkoutDate DATE NOT NULL,
+                         CheckoutDate DATE NOT NULL  check ( CheckoutDate > CheckinDate ),
                          PRIMARY KEY(ArchiveID),
                          FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
                          FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
@@ -105,13 +109,13 @@ CREATE TABLE Archive (
 
 
 CREATE TABLE Booking (
-                         BookingID SERIAL NOT NULL,
+                         BookingID SERIAL NOT NULL UNIQUE ,
                          HotelID CHAR(5) NOT NULL,
                          RoomID CHAR(5) NOT NULL,
                          CustomerID SERIAL NOT NULL,
                          BookingDate DATE NOT NULL,
                          CheckinDate DATE NOT NULL,
-                         CheckoutDate Date NOT NULL,
+                         CheckoutDate Date NOT NULL  check ( CheckoutDate > CheckinDate ),
                          PRIMARY KEY (BookingID),
                          FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
                          FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
@@ -135,11 +139,9 @@ INSERT INTO HotelChain VALUES
                            ('00002','Hilton', '16 Hawk Lane, Chicago, USA, 39427', 8, 'hello@hilton.com', '6236306193'),
                            ('00003','Fairmont', '173 Romane St, New York, USA, 92649', 8, 'fairmont@contact.com', '3432003847'),
                            ('00004','Galaxy', '73 Fairy St, Miami, USA 33130', 8, 'galaxy@fly.com', '3045849385'),
-                           ('00005', 'Refresh Resort', '1 Heavenly St, Charleston, USA 29403', 8, 'contact@refresh.com', '3045849385');
+                           ('00005', 'Refresh Resort', '1 Heavenly St, Charleston, USA 29403', 8, 'contact@refresh.com', '3035849385');
 
-/*
-regex for city : , [a-zA-Z]*( [a-zA-Z]*)*, USA
-*/
+
 INSERT INTO Hotel VALUES
                       ('11001', '00001', 3, 50, '123 Main St, Springfield, USA 62704', 'contactspring@marriot.com', '5551234567'),
                       ('11002', '00001', 4, 100, '456 Oak Ave, Portland, USA 97209', 'contactoak@marriot.com', '5552345678'),
@@ -475,17 +477,17 @@ INSERT INTO positions VALUES
                           ('00006', 'HR represantative');
 
 INSERT INTO employee VALUES
-                         ('00001',  'employee1@admin.com', '12345', '00001', '15008', 'raj tajmahal', '155 stewart street', 563349846),
-                         ('00002',  'employee2@admin.com', '12345', '00002', '15007', 'raj tajmahal', '155 stewart street', 563349847),
-                         ('00003',  'employee3@admin.com', '12345', '00003', '15006', 'raj tajmahal', '155 stewart street', 563349848),
-                         ('00004',  'employee4@admin.com', '12345', '00002', '15005', 'raj tajmahal', '155 stewart street', 563349849),
-                         ('00005',  'employee5@admin.com', '12345', '00004', '15004', 'raj tajmahal', '155 stewart street', 563349841),
-                         ('00006',  'employee6@admin.com', '12345', '00005', '15003', 'raj tajmahal', '155 stewart street', 563349842),
-                         ('00007',  'employee7@admin.com', '12345', '00003', '15002', 'raj tajmahal', '155 stewart street', 563349843),
-                         ('00008',  'employee8@admin.com', '12345', '00002', '15001', 'raj tajmahal', '155 stewart street', 563349844),
-                         ('00009',  'employee9@admin.com', '12345', '00002', '14008', 'raj tajmahal', '155 stewart street', 563349845),
-                         ('00010',  'employee10@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349856),
-                         ('00011',  'employee11@admin.com', '12345', '00002', '14007', 'raj tajmahal', '155 stewart street', 563349896);
+                         ('00001',  'employee1@admin.com', '12345', '15008', 'raj tajmahal', '155 stewart street', 563349846),
+                         ('00002',  'employee2@admin.com', '12345', '15007', 'raj tajmahal', '155 stewart street', 563349847),
+                         ('00003',  'employee3@admin.com', '12345', '15006', 'raj tajmahal', '155 stewart street', 563349848),
+                         ('00004',  'employee4@admin.com', '12345', '15005', 'raj tajmahal', '155 stewart street', 563349849),
+                         ('00005',  'employee5@admin.com', '12345', '15004', 'raj tajmahal', '155 stewart street', 563349841),
+                         ('00006',  'employee6@admin.com', '12345', '15003', 'raj tajmahal', '155 stewart street', 563349842),
+                         ('00007',  'employee7@admin.com', '12345', '15002', 'raj tajmahal', '155 stewart street', 563349843),
+                         ('00008',  'employee8@admin.com', '12345', '15001', 'raj tajmahal', '155 stewart street', 563349844),
+                         ('00009',  'employee9@admin.com', '12345', '14008', 'raj tajmahal', '155 stewart street', 563349845),
+                         ('00010',  'employee10@admin.com', '12345', '14007', 'raj tajmahal', '155 stewart street', 563349856),
+                         ('00011',  'employee11@admin.com', '12345', '14007', 'raj tajmahal', '155 stewart street', 563349896);
 
 CREATE VIEW Available_Rooms AS
 Select subView2.City as id, count(*) as numRoomsAvailable from
@@ -537,8 +539,11 @@ CREATE TRIGGER increment_num_of_hotels_trigger
 EXECUTE FUNCTION increment_num_of_hotels();
 
 CREATE INDEX idx_room_hotel_id ON Room (HotelID);
-CREATE INDEX idx_hotel_hotel_id on Hotel(HotelID);
-CREATE INDEX idx_booking_customer_id on Booking(CustomerID);
+CREATE INDEX idx_hotel_hotel_id ON Hotel(HotelID);
+CREATE INDEX idx_booking_customer_id ON Booking(CustomerID);
 
+
+-- DROP FUNCTION increment_num_of_hotels();
+-- DROP FUNCTION increment_num_of_rooms();
 -- DROP VIEW available_rooms, hotels_capacity;
 -- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities;

@@ -39,7 +39,6 @@ export const Login = ({customer, setCustomer, employee, setEmployee}) => {
                             employeeid: tempResponse.employeeid,
                             email: tempResponse.email,
                             password: tempResponse.password,
-                            positionid: tempResponse.positionid,
                             hotelid: tempResponse.hotelid,
                             fullname: tempResponse.fullname,
                             address: tempResponse.address,

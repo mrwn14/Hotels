@@ -20,8 +20,8 @@ pool.connect();
 
 const employeeChecker = (email) => {
     let employee = false;
-    email = email.split("@")[1].split(".")[0]
-    if (email == "admin"){
+    email = email.split("@")[1]
+    if (email == "admin.com"){
         employee = true;
     }
     return employee
@@ -219,7 +219,6 @@ app.post('/CreateRenting', async (req, res) => {
     let employeeid = req.body.employeeid;
     let checkInValue = req.body.checkInValue;
     let checkOutValue = req.body.checkOutValue;
-    console.log("HUHFDUSHK");
     let customerFinderQuery = "SELECT customer.customerid FROM customer where customer.ssn='"+ssn+"';"
     const queryResult1 = await pool.query(customerFinderQuery);
     let customerid = queryResult1.rows[0].customerid;
@@ -336,37 +335,37 @@ app.patch('/UpdateEmployee', async (req, res) => {
     let employeeid = req.body.employeeid;
     let email = req.body.email;
     if(!employeeChecker(email)){
-        res.status(404).json("Invalid email, should have @admin.com to work.")
+        res.status(404).json("Invalid email, should have @admin.com to work.");
     }
-    let password = req.body.password;
-    let positionid = req.body.positionid;
-    let hotelid = req.body.hotelid;
-    let fullname = req.body.fullname;
-    let address = req.body.address;
-    let ssn = req.body.ssn;
-    let query = "Update employee set email = '"+email+
-                                            "', password ='"+ password+
-                                            "', positionid = '"+positionid+
-                                            "', hotelid = '"+ hotelid+
-                                            "', fullname ='"+ fullname+
-                                            "', address ='"+ address+
-                                            "', ssn ='"+ ssn+
-                                            "' where employeeid = '"+employeeid+"';"
-    let queryResult;
-    console.log(query);
-    try {
-        queryResult = await pool.query(query + ";");
-    } catch (error) {
-        console.log("Insertion failed.");
-    }
-
-    try {
-        if (queryResult.rows) {
-
-            res.status(200).send(queryResult.rows);
+    else{
+        let password = req.body.password;
+        let hotelid = req.body.hotelid;
+        let fullname = req.body.fullname;
+        let address = req.body.address;
+        let ssn = req.body.ssn;
+        let query = "Update employee set email = '"+email+
+                                                "', password ='"+ password+
+                                                "', hotelid = '"+ hotelid+
+                                                "', fullname ='"+ fullname+
+                                                "', address ='"+ address+
+                                                "', ssn ='"+ ssn+
+                                                "' where employeeid = '"+employeeid+"';"
+        let queryResult;
+        console.log(query);
+        try {
+            queryResult = await pool.query(query + ";");
+        } catch (error) {
+            console.log("Insertion failed.");
         }
-    } catch (error) {
-        res.status(404).json("Invalid data, couldn't update");
+
+        try {
+            if (queryResult.rows) {
+
+                res.status(200).send(queryResult.rows);
+            }
+        } catch (error) {
+            res.status(404).json("Invalid data, couldn't update");
+        }
     }
 })
 

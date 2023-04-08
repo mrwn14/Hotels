@@ -52,7 +52,6 @@ export const EmployeeUpdate = ({ employee, setEmployee }: Props) => {
             fullname: fullnameValue,
             ssn: ssnValue,
             address: addressValue,
-            positionid: employee?.positionid,
             hotelid: employee?.hotelid
 
         };

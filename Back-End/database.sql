@@ -59,7 +59,7 @@ CREATE TABLE Customer (
 );
 
 CREATE TABLE Employee (
-                          EmployeeID CHAR(5) NOT NULL UNIQUE ,
+                          EmployeeID SERIAL NOT NULL UNIQUE ,
                           Email VARCHAR(40) NOT NULL  ,
                           Password VARCHAR(40) NOT NULL,
                           HotelID CHAR(5) NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE Employee (
 
 );
 CREATE TABLE EmployeePosition (
-                                  EmployeeID CHAR(5) NOT NULL,
+                                  EmployeeID SERIAL NOT NULL,
                                   PositionID CHAR(5) NOT NULL,
                                   PRIMARY KEY (EmployeeID, PositionID),
                                   FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID) ON DELETE CASCADE,
@@ -125,6 +125,73 @@ CREATE TABLE Cities (
     City varchar(20) NOT NULL unique
 );
 
+--      Trigger1 Creation       --
+CREATE FUNCTION increment_num_of_rooms()
+    RETURNS TRIGGER AS $increment_num_of_rooms$
+BEGIN
+    UPDATE Hotel
+    SET NumOfRooms = NumOfRooms + 1
+    WHERE HotelID = NEW.HotelID;
+    RETURN NEW;
+END;
+
+$increment_num_of_rooms$ LANGUAGE plpgsql;
+
+CREATE TRIGGER increment_num_of_rooms_trigger
+    AFTER INSERT ON Room
+    FOR EACH ROW
+EXECUTE FUNCTION increment_num_of_rooms();
+--      Trigger1 Creation       --
+
+
+--      Trigger2 Creation       --
+CREATE FUNCTION increment_num_of_hotels()
+    RETURNS TRIGGER AS $increment_num_of_hotels$
+BEGIN
+    UPDATE HotelChain
+    SET numberofhotels = numberofhotels + 1
+    WHERE chainid = NEW.chainid;
+    RETURN NEW;
+END;
+
+$increment_num_of_hotels$ LANGUAGE plpgsql;
+
+CREATE TRIGGER increment_num_of_hotels_trigger
+    AFTER INSERT ON hotel
+    FOR EACH ROW
+EXECUTE FUNCTION increment_num_of_hotels();
+--      Trigger2 Creation       --
+
+
+--      Views Creation       --
+CREATE VIEW Available_Rooms AS
+    Select subView2.City as id, count(*) as numRoomsAvailable from
+        (Select * from
+            ((room natural join hotel) left join Cities on Address LIKE concat('%',Cities.City,'%')) as subView1
+         where subView1.RoomID not in (select booking.roomid from booking)
+           AND subView1.RoomID not in (select booking.roomid from booking)
+        )
+            as subView2 group by subView2.City;
+
+CREATE VIEW Hotels_Capacity AS
+    Select subView2.Name, subView2.address as id, sum(subView2.Capacity) as capacity from
+        (SELECT * from
+            ((room natural join hotel) left join hotelchain on Hotel.ChainID = HotelChain.ChainID) as subview1
+         where subView1.RoomID not in (select booking.roomid from booking)
+           AND subView1.RoomID not in (select booking.roomid from booking)
+        )
+            as subView2 group by subView2.address, subView2.name ;
+--      Views Creation       --
+
+
+--      Index creation      --
+CREATE INDEX idx_room_hotel_id ON Room (HotelID);
+CREATE INDEX idx_hotel_hotel_id ON Hotel(HotelID);
+CREATE INDEX idx_booking_customer_id ON Booking(CustomerID);
+--      Index creation      --
+
+
+
 /*
 SQL INSERTS
 
@@ -143,50 +210,50 @@ INSERT INTO HotelChain VALUES
 
 
 INSERT INTO Hotel VALUES
-                      ('11001', '00001', 3, 50, '123 Main St, Springfield, USA 62704', 'contactspring@marriot.com', '5551234567'),
-                      ('11002', '00001', 4, 100, '456 Oak Ave, Portland, USA 97209', 'contactoak@marriot.com', '5552345678'),
-                      ('11003', '00001', 2, 25, '789 Elm St, Charleston, USA 29403', 'contactelm@marriot.com', '5553456789'),
-                      ('11004', '00001', 5, 150, '321 Maple Dr, Austin, USA 78753', 'contactmaple@marriot.com', '5554567890'),
-                      ('11005', '00001', 3, 50, '987 Pine St, Miami, USA 33130', 'contactpine@marriot.com', '5555678901'),
-                      ('11006', '00001', 4, 100, '2468 Market St, San Francisco, USA 94114', 'contactmarket@marriot.com', '5556789012'),
-                      ('11007', '00001', 2, 25, '1357 Broadway, New York, USA 10018', 'contactbroadway@marriot.com', '5557890123'),
-                      ('11008', '00001', 5, 150, '3699 Wilshire Blvd, Los Angeles, USA 90010', 'contactwilshire@marriot.com', '5558901234'),
+                      ('11001', '00001', 3, 0, '123 Main St, Springfield, USA 62704', 'contactspring@marriot.com', '5551234567'),
+                      ('11002', '00001', 4, 0, '456 Oak Ave, Portland, USA 97209', 'contactoak@marriot.com', '5552345678'),
+                      ('11003', '00001', 2, 0, '789 Elm St, Charleston, USA 29403', 'contactelm@marriot.com', '5553456789'),
+                      ('11004', '00001', 5, 0, '321 Maple Dr, Austin, USA 78753', 'contactmaple@marriot.com', '5554567890'),
+                      ('11005', '00001', 3, 0, '987 Pine St, Miami, USA 33130', 'contactpine@marriot.com', '5555678901'),
+                      ('11006', '00001', 4, 0, '2468 Market St, San Francisco, USA 94114', 'contactmarket@marriot.com', '5556789012'),
+                      ('11007', '00001', 2, 0, '1357 Broadway, New York, USA 10018', 'contactbroadway@marriot.com', '5557890123'),
+                      ('11008', '00001', 5, 0, '3699 Wilshire Blvd, Los Angeles, USA 90010', 'contactwilshire@marriot.com', '5558901234'),
 
-                      ('12001', '00002', 3, 50, '2345 Cherry Lane, Seattle, USA 98101', 'hellocherry@hilton.com', '5551234568'),
-                      ('12002', '00002', 4, 100, '6789 Oakwood Dr, Denver, USA 80209', 'hellooakwood@hilton.com', '5552345679'),
-                      ('12003', '00002', 2, 25, '1111 Peachtree St, Atlanta, USA 30309', 'hellopeachtree@hilton.com', '5553456790'),
-                      ('12004', '00002', 5, 150, '2222 Walnut St, Philadelphia, USA 19103', 'hellowalnut@hilton.com', '5554567891'),
-                      ('12005', '00002', 3, 50, '3333 State St, Chicago, USA 60610', 'hellostate@hilton.com', '5555678902'),
-                      ('12006', '00002', 4, 100, '4444 Market St, San Diego, USA 92102', 'hellomarket@hilton.com', '5556789013'),
-                      ('12007', '00002', 2, 25, '5555 Sunset Blvd, Hollywood, USA 90028', 'info@hotel7.com', '5557890124'),
-                      ('12008', '00002', 4, 100, '6666 Lombard St, San Francisco, USA 94111', 'hellolombard@hilton.com', '5556789013'),
+                      ('12001', '00002', 3, 0, '2345 Cherry Lane, Seattle, USA 98101', 'hellocherry@hilton.com', '5551234568'),
+                      ('12002', '00002', 4, 0, '6789 Oakwood Dr, Denver, USA 80209', 'hellooakwood@hilton.com', '5552345679'),
+                      ('12003', '00002', 2, 0, '1111 Peachtree St, Atlanta, USA 30309', 'hellopeachtree@hilton.com', '5553456790'),
+                      ('12004', '00002', 5, 0, '2222 Walnut St, Philadelphia, USA 19103', 'hellowalnut@hilton.com', '5554567891'),
+                      ('12005', '00002', 3, 0, '3333 State St, Chicago, USA 60610', 'hellostate@hilton.com', '5555678902'),
+                      ('12006', '00002', 4, 0, '4444 Market St, San Diego, USA 92102', 'hellomarket@hilton.com', '5556789013'),
+                      ('12007', '00002', 2, 0, '5555 Sunset Blvd, Hollywood, USA 90028', 'info@hotel7.com', '5557890124'),
+                      ('12008', '00002', 4, 0, '6666 Lombard St, San Francisco, USA 94111', 'hellolombard@hilton.com', '5556789013'),
 
-                      ('13001', '00003', 3, 50, '7777 Central Park, New York, USA 10019', 'fairmontcentral@contact.com', '5551234569'),
-                      ('13002', '00003', 4, 100, '8888 Rodeo Dr, Beverly Hills, USA 90210', 'fairmontrodeo@contact.com', '5552345680'),
-                      ('13003', '00003', 2, 25, '9999 Huntington Ave, Boston, USA 02115', 'fairmonthuntington@contact.com', '5553456791'),
-                      ('13004', '00003', 5, 150, '10000 Lincoln Ave, Miami, USA 33139', 'fairmontlincoln@contact.com', '5554567892'),
-                      ('13005', '00003', 3, 50, '11000 Melrose Ave, Los Angeles, USA 90048', 'fairmontmelrose@contact.com', '5555678903'),
-                      ('13006', '00003', 4, 100, '12000 Ventura Blvd, Sherman Oaks, USA 91423', 'fairmontventura@contact.com', '5556789014'),
-                      ('13007', '00003', 2, 25, '13000 Sunset Blvd, Hollywood, USA 90027', 'fairmontsunset@contact.com', '5557890125'),
-                      ('13008', '00003', 5, 150, '14000 Wilshire Blvd, Beverly Hills, USA 90212', 'fairmontwilhshire@contact.com', '5558901236'),
+                      ('13001', '00003', 3, 0, '7777 Central Park, New York, USA 10019', 'fairmontcentral@contact.com', '5551234569'),
+                      ('13002', '00003', 4, 0, '8888 Rodeo Dr, Beverly Hills, USA 90210', 'fairmontrodeo@contact.com', '5552345680'),
+                      ('13003', '00003', 2, 0, '9999 Huntington Ave, Boston, USA 02115', 'fairmonthuntington@contact.com', '5553456791'),
+                      ('13004', '00003', 5, 0, '10000 Lincoln Ave, Miami, USA 33139', 'fairmontlincoln@contact.com', '5554567892'),
+                      ('13005', '00003', 3, 0, '11000 Melrose Ave, Los Angeles, USA 90048', 'fairmontmelrose@contact.com', '5555678903'),
+                      ('13006', '00003', 4, 0, '12000 Ventura Blvd, Sherman Oaks, USA 91423', 'fairmontventura@contact.com', '5556789014'),
+                      ('13007', '00003', 2, 0, '13000 Sunset Blvd, Hollywood, USA 90027', 'fairmontsunset@contact.com', '5557890125'),
+                      ('13008', '00003', 5, 0, '14000 Wilshire Blvd, Beverly Hills, USA 90212', 'fairmontwilhshire@contact.com', '5558901236'),
 
-                      ('14001', '00004', 3, 50, '15000 Santa Monica Blvd, Los Angeles, USA 90035', 'galaxysantamonica@fly.com', '5551234570'),
-                      ('14002', '00004', 4, 100, '16000 Pico Blvd, Santa Monica, USA 90405', 'galaxypico@fly.com', '5552345681'),
-                      ('14003', '00004', 2, 25, '17000 Colorado Blvd, Pasadena, USA 91106', 'galaxycolorado@fly.com', '5553456792'),
-                      ('14004', '00004', 5, 150, '18000 Mulholland Dr, Los Angeles, USA 90272', 'galaxymulholland@fly.com', '5554567893'),
-                      ('14005', '00004', 3, 50, '19000 Magnolia Blvd, Burbank, USA 91505', 'galaxymagnolia@fly.com', '5555678904'),
-                      ('14006', '00004', 4, 100, '20000 Pacific Coast Hwy, Malibu, USA 90265', 'galaxypacificcoast@fly.com', '5556789015'),
-                      ('14007', '00004', 2, 25, '21000 Topanga Canyon Blvd, Chatsworth, USA 91311', 'galaxytopangacanyon@fly.com', '5557890126'),
-                      ('14008', '00004', 5, 150, '22000 S Figueroa St, Los Angeles, USA 90007', 'galaxyfigueroa@fly.com', '5558907382'),
+                      ('14001', '00004', 3, 0, '15000 Santa Monica Blvd, Los Angeles, USA 90035', 'galaxysantamonica@fly.com', '5551234570'),
+                      ('14002', '00004', 4, 0, '16000 Pico Blvd, Santa Monica, USA 90405', 'galaxypico@fly.com', '5552345681'),
+                      ('14003', '00004', 2, 0, '17000 Colorado Blvd, Pasadena, USA 91106', 'galaxycolorado@fly.com', '5553456792'),
+                      ('14004', '00004', 5, 0, '18000 Mulholland Dr, Los Angeles, USA 90272', 'galaxymulholland@fly.com', '5554567893'),
+                      ('14005', '00004', 3, 0, '19000 Magnolia Blvd, Burbank, USA 91505', 'galaxymagnolia@fly.com', '5555678904'),
+                      ('14006', '00004', 4, 0, '20000 Pacific Coast Hwy, Malibu, USA 90265', 'galaxypacificcoast@fly.com', '5556789015'),
+                      ('14007', '00004', 2, 0, '21000 Topanga Canyon Blvd, Chatsworth, USA 91311', 'galaxytopangacanyon@fly.com', '5557890126'),
+                      ('14008', '00004', 5, 0, '22000 S Figueroa St, Los Angeles, USA 90007', 'galaxyfigueroa@fly.com', '5558907382'),
 
-                      ('15001', '00005', 3, 50, '7666 Central Park, New York, USA 10019', 'contactcarson@refresh.com', '5551234571'),
-                      ('15002', '00005', 4, 100, '24000 Imperial Hwy, Downey, USA 90242', 'contactimperial@refresh.com', '5552345682'),
-                      ('15003', '00005', 2, 25, '25000 San Fernando Rd, Santa Clarita, USA 91321', 'contactsanfernando@refresh.com', '5553456793'),
-                      ('15004', '00005', 5, 150, '26000 N Western Ave, San Pedro, USA 90731', 'contactwestern@refresh.com', '5554567894'),
-                      ('15005', '00005', 3, 50, '27000 E Washington Blvd, Pasadena, USA 91107', 'contactwashington@refresh.com', '5555678905'),
-                      ('15006', '00005', 4, 100, '28000 Olympic Blvd, Santa Monica, USA 90404', 'contactolympic@refresh.com', '5556789016'),
-                      ('15007', '00005', 2, 25, '29000 Van Nuys Blvd, Sherman Oaks, USA 91403', 'contactvannuys@refresh.com', '5557890127'),
-                      ('15008', '00005', 5, 150, '30000 Beverly Blvd, Los Angeles, USA 90048', 'contactbeverly@refresh.com', '5558901234');
+                      ('15001', '00005', 3, 0, '7666 Central Park, New York, USA 10019', 'contactcarson@refresh.com', '5551234571'),
+                      ('15002', '00005', 4, 0, '24000 Imperial Hwy, Downey, USA 90242', 'contactimperial@refresh.com', '5552345682'),
+                      ('15003', '00005', 2, 0, '25000 San Fernando Rd, Santa Clarita, USA 91321', 'contactsanfernando@refresh.com', '5553456793'),
+                      ('15004', '00005', 5, 0, '26000 N Western Ave, San Pedro, USA 90731', 'contactwestern@refresh.com', '5554567894'),
+                      ('15005', '00005', 3, 0, '27000 E Washington Blvd, Pasadena, USA 91107', 'contactwashington@refresh.com', '5555678905'),
+                      ('15006', '00005', 4, 0, '28000 Olympic Blvd, Santa Monica, USA 90404', 'contactolympic@refresh.com', '5556789016'),
+                      ('15007', '00005', 2, 0, '29000 Van Nuys Blvd, Sherman Oaks, USA 91403', 'contactvannuys@refresh.com', '5557890127'),
+                      ('15008', '00005', 5, 0, '30000 Beverly Blvd, Los Angeles, USA 90048', 'contactbeverly@refresh.com', '5558901234');
 
 
 
@@ -477,73 +544,48 @@ INSERT INTO positions VALUES
                           ('00006', 'HR represantative');
 
 INSERT INTO employee VALUES
-                         ('00001',  'employee1@admin.com', '12345', '15008', 'raj tajmahal', '155 stewart street', 563349846),
-                         ('00002',  'employee2@admin.com', '12345', '15007', 'raj tajmahal', '155 stewart street', 563349847),
-                         ('00003',  'employee3@admin.com', '12345', '15006', 'raj tajmahal', '155 stewart street', 563349848),
-                         ('00004',  'employee4@admin.com', '12345', '15005', 'raj tajmahal', '155 stewart street', 563349849),
-                         ('00005',  'employee5@admin.com', '12345', '15004', 'raj tajmahal', '155 stewart street', 563349841),
-                         ('00006',  'employee6@admin.com', '12345', '15003', 'raj tajmahal', '155 stewart street', 563349842),
-                         ('00007',  'employee7@admin.com', '12345', '15002', 'raj tajmahal', '155 stewart street', 563349843),
-                         ('00008',  'employee8@admin.com', '12345', '15001', 'raj tajmahal', '155 stewart street', 563349844),
-                         ('00009',  'employee9@admin.com', '12345', '14008', 'raj tajmahal', '155 stewart street', 563349845),
-                         ('00010',  'employee10@admin.com', '12345', '14007', 'raj tajmahal', '155 stewart street', 563349856),
-                         ('00011',  'employee11@admin.com', '12345', '14007', 'raj tajmahal', '155 stewart street', 563349896);
+                         (DEFAULT, 'employee1@admin.com', '12345', '11001', 'Asad Ahmed', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee2@admin.com', '12345', '11002', 'Fatima Khan', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee3@admin.com', '12345', '11003', 'Youssef Belhaj', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee4@admin.com', '12345', '11004', 'Ivan Petrov', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee5@admin.com', '12345', '11005', 'Elena Ivanova', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee6@admin.com', '12345', '11006', 'Pedro Hernandez', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee7@admin.com', '12345', '11007', 'Yan Li', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee8@admin.com', '12345', '11008', 'Ying Yang', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee9@admin.com', '12345', '12001', 'Mehreen Hassan', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee10@admin.com', '12345', '12002', 'Rabia Malik', '143 Jonathon St', 163349846),
+                         (DEFAULT, 'employee11@admin.com', '12345', '12003', 'Hicham Benali', '143 Jonathon St', 263349846),
+                         (DEFAULT, 'employee12@admin.com', '12345', '12004', 'Svetlana Kuznetsova', '143 Jonathon St', 363349846),
+                         (DEFAULT, 'employee13@admin.com', '12345', '12005', 'Carlos Martinez', '143 Jonathon St', 463349846),
+                         (DEFAULT, 'employee14@admin.com', '12345', '12006', 'Wei Zhang', '143 Jonathon St', 763349846),
+                         (DEFAULT, 'employee15@admin.com', '12345', '12007', 'Xin Chen', '143 Jonathon St', 863349846),
+                         (DEFAULT, 'employee16@admin.com', '12345', '12008', 'Yuliya Kozlova', '143 Jonathon St', 943349846),
+                         (DEFAULT, 'employee17@admin.com', '12345', '13001', 'Ali Khan', '143 Jonathon St', 573349846),
+                         (DEFAULT, 'employee18@admin.com', '12345', '13002', 'Zainab Malik', '143 Jonathon St', 583349846),
+                         (DEFAULT, 'employee19@admin.com', '12345', '13003', 'Amine Moussaoui', '143 Jonathon St', 593349846),
+                         (DEFAULT, 'employee20@admin.com', '12345', '13004', 'Luis Hernandez', '143 Jonathon St', 513349846),
+                         (DEFAULT, 'employee21@admin.com', '12345', '13005', 'Nova Stardust', '143 Jonathon St', 523349846),
+                         (DEFAULT, 'employee22@admin.com', '12345', '13006', 'Xander Phoenix', '143 Jonathon St', 561349846),
+                         (DEFAULT, 'employee23@admin.com', '12345', '13007', 'Luna Eclipse', '143 Jonathon St', 562349846),
+                         (DEFAULT, 'employee24@admin.com', '12345', '13008', 'Jaxon Thunder', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee25@admin.com', '12345', '14001', 'Aria Sky', '143 Jonathon St', 564349846),
+                         (DEFAULT, 'employee26@admin.com', '12345', '14002', 'Orion Blaze', '143 Jonathon St', 565349846),
+                         (DEFAULT, 'employee27@admin.com', '12345', '14003', 'Aurora Borealis', '143 Jonathon St', 563498476),
+                         (DEFAULT, 'employee28@admin.com', '12345', '14004', 'Phoenix Fire', '143 Jonathon St', 567334984),
+                         (DEFAULT, 'employee29@admin.com', '12345', '14005', 'Zephyr Wind', '143 Jonathon St', 568329846),
+                         (DEFAULT, 'employee30@admin.com', '12345', '14006', 'Cassius Nightshade', '143 Jonathon St', 569319846),
+                         (DEFAULT,  'employee31@admin.com', '12345', '14007', 'Hamid Mcgee', '143 Jonathon St', 563339847),
+                         (DEFAULT,  'employee32@admin.com', '12345', '14008', 'Jonathon Bravo', '143 Jonathon St', 563349848),
+                         (DEFAULT,  'employee33@admin.com', '12345', '15001', 'Sad Johnny', '143 Jonathon St', 563359849),
+                         (DEFAULT,  'employee34@admin.com', '12345', '15002', 'Happy Johnny', '143 Jonathon St', 563369841),
+                         (DEFAULT,  'employee35@admin.com', '12345', '15003', 'Maid Luna', '143 Jonathon St', 563379842),
+                         (DEFAULT,  'employee36@admin.com', '12345', '15004', 'Experience Blaze', '143 Jonathon St', 563389543),
+                         (DEFAULT,  'employee37@admin.com', '12345', '15005', 'Sandstorm Boomie', '143 Jonathon St', 563399444),
+                         (DEFAULT,  'employee38@admin.com', '12345', '15006', 'Geegee Enthusiast', '143 Jonathon St', 563349344),
+                         (DEFAULT,  'employee39@admin.com', '12345', '15007', 'James Charles', '143 Jonathon St', 563319244),
+                         (DEFAULT,  'employee40@admin.com', '12345', '15008', 'Raj Tajmahal', '143 Jonathon St', 563349144);
 
-CREATE VIEW Available_Rooms AS
-Select subView2.City as id, count(*) as numRoomsAvailable from
-    (Select * from
-        ((room natural join hotel) left join Cities on Address LIKE concat('%',Cities.City,'%')) as subView1
-     where subView1.RoomID not in (select booking.roomid from booking)
-       AND subView1.RoomID not in (select booking.roomid from booking)
-    )
-        as subView2 group by subView2.City;
-
-CREATE VIEW Hotels_Capacity AS
-Select subView2.Name, subView2.address as id, sum(subView2.Capacity) as capacity from
-    (SELECT * from
-        ((room natural join hotel) left join hotelchain on Hotel.ChainID = HotelChain.ChainID) as subview1
-     where subView1.RoomID not in (select booking.roomid from booking)
-       AND subView1.RoomID not in (select booking.roomid from booking)
-    )
-        as subView2 group by subView2.address, subView2.name ;
-
-
-CREATE FUNCTION increment_num_of_rooms()
-    RETURNS TRIGGER AS $increment_num_of_rooms$
-BEGIN
-    UPDATE Hotel
-    SET NumOfRooms = NumOfRooms + 1
-    WHERE HotelID = NEW.HotelID;
-    RETURN NEW;
-END;
-$increment_num_of_rooms$ LANGUAGE plpgsql;
-
-CREATE TRIGGER increment_num_of_rooms_trigger
-    AFTER INSERT ON Room
-    FOR EACH ROW
-EXECUTE FUNCTION increment_num_of_rooms();
-
-CREATE FUNCTION increment_num_of_hotels()
-    RETURNS TRIGGER AS $increment_num_of_hotels$
-BEGIN
-    UPDATE HotelChain
-    SET numberofhotels = numberofhotels + 1
-    WHERE chainid = NEW.chainid;
-    RETURN NEW;
-END;
-$increment_num_of_hotels$ LANGUAGE plpgsql;
-
-CREATE TRIGGER increment_num_of_hotels_trigger
-    AFTER INSERT ON hotel
-    FOR EACH ROW
-EXECUTE FUNCTION increment_num_of_hotels();
-
-CREATE INDEX idx_room_hotel_id ON Room (HotelID);
-CREATE INDEX idx_hotel_hotel_id ON Hotel(HotelID);
-CREATE INDEX idx_booking_customer_id ON Booking(CustomerID);
-
-
+-- DROP VIEW available_rooms, hotels_capacity;
+-- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities, EmployeePosition;
 -- DROP FUNCTION increment_num_of_hotels();
 -- DROP FUNCTION increment_num_of_rooms();
--- DROP VIEW available_rooms, hotels_capacity;
--- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities;

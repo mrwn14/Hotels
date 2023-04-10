@@ -71,7 +71,7 @@ app.get('/EmployeeRentings',async (req, res) => {
     query = "SELECT * FROM renting WHERE hotelid = '" + hotelId +"'";
     console.log(query);
     const send = await pool.query(query + ";");
-    console.log(res.rows);
+    console.log(send.rows);
     res.json(send.rows);
 })
 
@@ -82,11 +82,13 @@ app.get('/Hotels', async (req, res) => {
         query += "roomID NOT IN (SELECT room.roomID FROM room LEFT JOIN booking ON room.RoomID = booking.RoomID WHERE (\'"+ params["checkIn"] +"\' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" 
         + (params["checkOut"]!="undefined"? " AND '"+ params["checkOut"] + "' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" : ")")
         + (params["capacity"]!="undefined"? " AND room.capacity = "+params["capacity"] : "")
-        + (params["rating"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.category = "+params["rating"]+")":"")
+        + (params["rating"]!="undefined"? " AND room.roomid in (SELECT roomid FROM room NATURAL JOIN hotel where hotel.category = "+params["rating"]+")":"")
         + (params["price"]!="undefined"? " AND room.price <= " + params["price"] : "")
-        + (params["city"]!="undefined"? " AND room.roomid in (SELECT roomid from room NATURAL JOIN hotel where hotel.address LIKE '%"+params["city"]+"%')":"")
+        + (params["city"]!="undefined"? " AND room.roomid in (SELECT roomid FROM room NATURAL JOIN hotel where hotel.address LIKE '%"+params["city"]+"%')":"")
         + (params["hotelChain"]!="undefined"? " AND room.hotelID LIKE '" + params["hotelChain"] +"%'": "")
+        + (params["rooms"]!= "undefined"? " AND room.hotelID IN (SELECT hotel.hotelid FROM hotel WHERE hotel.NumOfRooms = "+params["rooms"] +")":"" )
         const send = await pool.query(query +";");
+        console.log(send.rows);
         res.json(send.rows);
     }
     catch (err) {
@@ -150,7 +152,7 @@ app.post('/Login', async (req, res) => {
     let password = req.body.password;
     //building query and performing it
     let employee = employeeChecker(email);
-    let employeeQuery = "SELECT * FROM employee WHERE employee.email = '"+email+"' AND employee.password = '"+password+"'"
+    let employeeQuery = "SELECT employee.EmployeeID, email, Password, HotelID, FullName, Address, SSN, (CASE WHEN Employee.EmployeeID IN (SELECT employeeposition.employeeid FROM employeeposition WHERE PositionID = 5) THEN true else false END) AS isManager FROM employee WHERE employee.email = '"+email+"' AND employee.password = '"+password+"'"
     let CustomerQuery = "SELECT * FROM customer WHERE customer.email = '"+email+"' AND customer.password = '"+password+"'"
     let query = ""
     employee? query = employeeQuery : query = CustomerQuery
@@ -163,6 +165,7 @@ app.post('/Login', async (req, res) => {
         res.status(200).json(queryResult.rows);
     }
     else if (queryResult.rows.length == 1 && employee){
+        console.log(queryResult.rows)
         res.status(201).json(queryResult.rows);
     }
 })
@@ -221,19 +224,25 @@ app.post('/CreateRenting', async (req, res) => {
     let checkOutValue = req.body.checkOutValue;
     let customerFinderQuery = "SELECT customer.customerid FROM customer where customer.ssn='"+ssn+"';"
     const queryResult1 = await pool.query(customerFinderQuery);
-    let customerid = queryResult1.rows[0].customerid;
-
-
-    let query = "INSERT INTO Renting VALUES (DEFAULT,'"+hotelid+"','"+roomid+"','"+customerid+"','"+checkInValue+"','"+checkOutValue+"');"
-    console.log(query);
-    const queryResult = await pool.query(query);
-    try {
-        if (queryResult.rows) {
-            res.status(200).send(queryResult.rows);
-        }
-    } catch (error) {
-        res.status(404).json("Error occured.");
+    if(queryResult1.rows.length == 0){
+        res.status(404).json('Customer does not exist')
     }
+    else {
+        let query, customerid;
+        customerid = queryResult1.rows[0].customerid;
+        console.log('customer id is ', queryResult1.rows);
+        query = "INSERT INTO Renting VALUES (DEFAULT,'"+hotelid+"','"+roomid+"','"+customerid+"','"+checkInValue+"','"+checkOutValue+"');"
+        console.log(query);
+        const queryResult = await pool.query(query);
+        try {
+            if (queryResult.rows) {
+                res.status(200).send(queryResult.rows);
+            }
+        } catch (error) {
+            res.status(404).json("Error occured.");
+        }
+    }
+
 })
 
 
@@ -297,6 +306,14 @@ app.delete('/HotelRentings/', async (req, res) => {
     }
 })
 
+
+app.delete('/Customer/:id', async (req, res) => {
+    params = req.params;
+    let query = "DELETE FROM customer WHERE customerid = '"+ params["id"] + "'"
+    const send = await pool.query(query2)
+    res.sendStatus(200);
+    
+})
 // Patch requests
 app.patch('/UpdateCustomer', async (req, res) => {
     //form data

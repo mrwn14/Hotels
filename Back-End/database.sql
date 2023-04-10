@@ -42,7 +42,7 @@ CREATE TABLE Room (
 );
 
 CREATE TABLE Positions (
-                           PositionID CHAR(5) NOT NULL UNIQUE,
+                           PositionID SERIAL NOT NULL UNIQUE,
                            PositionName VARCHAR(40) NOT NULL,
                            PRIMARY KEY (PositionID)
 );
@@ -72,7 +72,7 @@ CREATE TABLE Employee (
 );
 CREATE TABLE EmployeePosition (
                                   EmployeeID SERIAL NOT NULL,
-                                  PositionID CHAR(5) NOT NULL,
+                                  PositionID SERIAL NOT NULL,
                                   PRIMARY KEY (EmployeeID, PositionID),
                                   FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID) ON DELETE CASCADE,
                                   FOREIGN KEY (PositionID) REFERENCES Positions(PositionID) ON DELETE CASCADE
@@ -101,12 +101,8 @@ CREATE TABLE Archive (
                          BookingDate DATE, --can be null since rentings don't have booking dates
                          CheckinDate DATE NOT NULL,
                          CheckoutDate DATE NOT NULL  check ( CheckoutDate > CheckinDate ),
-                         PRIMARY KEY(ArchiveID),
-                         FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
-                         FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
-                         FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID) ON DELETE CASCADE
+                         PRIMARY KEY(ArchiveID)
 );
-
 
 CREATE TABLE Booking (
                          BookingID SERIAL NOT NULL UNIQUE ,
@@ -535,13 +531,15 @@ INSERT INTO Cities VALUES
                        ('Downey'),
                        ('Santa Clarita'),
                        ('San Pedro');
+
 INSERT INTO positions VALUES
-                          ('00001', 'clerk'),
-                          ('00002', 'receptionist'),
-                          ('00003', 'developer'),
-                          ('00004', 'house keeper'),
-                          ('00005', 'manager'),
-                          ('00006', 'HR represantative');
+                          (DEFAULT, 'clerk'),
+                          (DEFAULT, 'receptionist'),
+                          (DEFAULT, 'developer'),
+                          (DEFAULT, 'house keeper'),
+                          (DEFAULT, 'manager'),
+                          (DEFAULT, 'HR represantative');
+
 
 INSERT INTO employee VALUES
                          (DEFAULT, 'employee1@admin.com', '12345', '11001', 'Asad Ahmed', '143 Jonathon St', 563349846),
@@ -584,6 +582,88 @@ INSERT INTO employee VALUES
                          (DEFAULT,  'employee38@admin.com', '12345', '15006', 'Geegee Enthusiast', '143 Jonathon St', 563349344),
                          (DEFAULT,  'employee39@admin.com', '12345', '15007', 'James Charles', '143 Jonathon St', 563319244),
                          (DEFAULT,  'employee40@admin.com', '12345', '15008', 'Raj Tajmahal', '143 Jonathon St', 563349144);
+
+INSERT INTO employeeposition VALUES
+                                 (1,1),
+                                 (1,5),
+                                 (2,1),
+                                 (2,5),
+                                 (3,1),
+                                 (3,5),
+                                 (4,1),
+                                 (4,5),
+                                 (5,1),
+                                 (5,5),
+                                 (6,1),
+                                 (6,5),
+                                 (7,1),
+                                 (7,5),
+                                 (8,1),
+                                 (8,5),
+                                 (9,1),
+                                 (9,5),
+                                 (10,1),
+                                 (10,5),
+                                 (11,1),
+                                 (11,5),
+                                 (12,1),
+                                 (12,5),
+                                 (13,1),
+                                 (13,5),
+                                 (14,1),
+                                 (14,5),
+                                 (15,1),
+                                 (15,5),
+                                 (16,1),
+                                 (16,5),
+                                 (17,1),
+                                 (17,5),
+                                 (18,1),
+                                 (18,5),
+                                 (19,1),
+                                 (19,5),
+                                 (20,1),
+                                 (20,5),
+                                 (21,1),
+                                 (21,5),
+                                 (22,1),
+                                 (22,5),
+                                 (23,1),
+                                 (23,5),
+                                 (24,1),
+                                 (24,5),
+                                 (25,1),
+                                 (25,5),
+                                 (26,1),
+                                 (26,5),
+                                 (27,1),
+                                 (27,5),
+                                 (28,1),
+                                 (28,5),
+                                 (29,1),
+                                 (29,5),
+                                 (30,1),
+                                 (30,5),
+                                 (31,1),
+                                 (31,5),
+                                 (32,1),
+                                 (32,5),
+                                 (33,1),
+                                 (33,5),
+                                 (34,1),
+                                 (34,5),
+                                 (35,1),
+                                 (35,5),
+                                 (36,1),
+                                 (36,5),
+                                 (37,1),
+                                 (37,5),
+                                 (38,1),
+                                 (38,5),
+                                 (39,1),
+                                 (39,5),
+                                 (40,1),
+                                 (40,5);
 
 -- DROP VIEW available_rooms, hotels_capacity;
 -- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities, EmployeePosition;

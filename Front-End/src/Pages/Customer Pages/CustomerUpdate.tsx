@@ -3,9 +3,9 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../DTO/dtos";
 type Props = {
-    customer: Customer | undefined,
-    setCustomer
-}
+    customer: Customer | undefined;
+    setCustomer;
+};
 export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
     const [fullname, setFullname] = useState(customer?.fullname);
     const [email, setEmail] = useState(customer?.email);
@@ -17,27 +17,29 @@ export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
     const fullnameRef = useRef<HTMLInputElement>(null);
     const ssnRef = useRef<HTMLInputElement>(null);
     const addressRef = useRef<HTMLInputElement>(null);
-    const nav = useNavigate()
+    const nav = useNavigate();
 
 
     const getCustomer = () => {
         fetch("http://localhost:4000/Customer/" + customer?.customerid)
-            .then(response => { return response.json(); })
-            .then(data => {
-                setFullname(data[0]['fullname']);
-                setEmail(data[0]['email']);
-                setAddress(data[0]['address']);
-                setSSN(data[0]['ssn']);
-                setPassword(data[0]['password']);
+            .then((response) => {
+                return response.json();
             })
-    }
+            .then((data) => {
+                setFullname(data[0]["fullname"]);
+                setEmail(data[0]["email"]);
+                setAddress(data[0]["address"]);
+                setSSN(data[0]["ssn"]);
+                setPassword(data[0]["password"]);
+            });
+    };
 
     useEffect(() => {
         getCustomer();
-    })
+    });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = () => {
+
         let emailValue = (emailRef.current?.value == "")? email : emailRef.current?.value;
         let passwordValue = (passwordRef.current?.value == "")? password : passwordRef.current?.value;
         let fullnameValue = (fullnameRef.current?.value == "")? fullname : fullnameRef.current?.value;
@@ -53,19 +55,33 @@ export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
             address: addressValue,
             dateofregistration: customer?.dateofregistration,
         };
-        console.log(data)
         axios
             .patch("http://localhost:4000/UpdateCustomer", data)
             .then((response) => {
                 alert("Your account has been updated");
                 setCustomer(data);
-                nav("/")
+                nav("/");
             })
             .catch((error) => {
                 alert(error.response.data);
             });
-    }
+    };
 
+    const handleDelete = () => {
+            let url = new URL(
+                "http://localhost:4000/Customer/" + customer?.customerid
+            );
+            fetch(url, { method: "DELETE" })
+                .then((response) => {
+                    if (response.status === 200) {
+                        alert("Account deleted successfully");
+                        window.location.replace("/");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+    };
 
     return (
         <>
@@ -76,7 +92,9 @@ export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                                 <u>Update account info</u>
                             </h1>
-                            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off">
+                            <div
+                                className="space-y-4 md:space-y-6"
+                            >
                                 <div>
                                     <label
                                         htmlFor="name"
@@ -128,12 +146,9 @@ export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
                                             placeholder="new email"
                                         />
                                     </div>
-
                                 </div>
                                 <div>
-                                    <label
-                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Password
                                     </label>
                                     <div className="flex">
@@ -208,16 +223,23 @@ export const CustomerUpdate = ({ customer, setCustomer }: Props) => {
                                             placeholder="new address"
                                         />
                                     </div>
-
                                 </div>
                                 <div className="mt-6">
-                                    <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                                    <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                                            onClick = {handleSubmit}
+                                    >
                                         Update
                                     </button>
                                 </div>
-
-                            </form>
-
+                                <div className="mt-6">
+                                    <button
+                                        className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700"
+                                        onClick={handleDelete}
+                                    >
+                                        DELETE ACCOUNT
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

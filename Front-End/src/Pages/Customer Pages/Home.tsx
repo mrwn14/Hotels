@@ -44,7 +44,9 @@ export const Home = ({customer}) => {
     const [city, setCity] = useState<string>();
     const [hotelChain, setHotelChain] = useState<string>();
     const [price, setPrice] = useState<string>();
-    const [data, setData] = useState<Room[]>([]);
+    const [rooms, setRooms] = useState<string>();
+    const [data, setData] = useState<Room[]>();
+    const [queried, setQueried] = useState<boolean>(false);
 
     let minCheckOutDate: Dayjs | null = null;
 
@@ -69,6 +71,9 @@ export const Home = ({customer}) => {
     const handlePriceChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPrice(event.target.value);
     };
+    const handleRoomsChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setRooms(event.target.value);
+    };
 
     const getCity = (address: string) : string =>  {
         const addressArr = address.split(", ");
@@ -76,8 +81,8 @@ export const Home = ({customer}) => {
         return city;
       }
 
-    const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined) => {
-        let newCheckIn: string, newCheckOut: string, newCapacity:string, newRating:string, newCity:string, newHotelChain:string, newPrice:string;
+    const compileData = (checkInValue: dayjs.Dayjs | null | undefined, checkOutValue: dayjs.Dayjs | null | undefined, capacity: Number | null | undefined, rating: Number | null | undefined, city: string | null | undefined, hotelChain: string | null | undefined, price: string | null | undefined, rooms: string | null | undefined) => {
+        let newCheckIn: string, newCheckOut: string, newCapacity:string, newRating:string, newCity:string, newHotelChain:string, newPrice:string, newRooms;
         // newCheckIn = ((checkInValue===undefined||checkInValue===null)? "undefined" : checkInValue.format("YYYY-MM-DD"));
         if (checkInValue === undefined || checkInValue == null) {
             newCheckIn = "undefined"; 
@@ -85,16 +90,19 @@ export const Home = ({customer}) => {
         if (checkOutValue === undefined || checkOutValue == null) {
             newCheckOut = "undefined";
         } else newCheckOut = checkOutValue.format("YYYY-MM-DD");
-        if (capacity == undefined || capacity == null) {
+        if (capacity == undefined || capacity == null || capacity == 0) {
             newCapacity = "undefined";
         } else newCapacity = capacity.toString();
-        if (rating == undefined || rating == null) {
+        if (rating == undefined || rating == null || rating == 0) {
             newRating = "undefined";
         } else newRating = rating.toString();
-        if (city == undefined   || city == null) {
+        if (city == undefined   || city == null || city == "") {
             newCity = "undefined";
         } else newCity = city;
-        if (hotelChain == undefined || hotelChain == null) {
+        if (rooms == undefined   || rooms == null || rooms == "") {
+            newRooms = "undefined";
+        } else newRooms = rooms;
+        if (hotelChain == undefined || hotelChain == null || hotelChain == "") {
             newHotelChain = "undefined";
         } else{
             switch (hotelChain) {
@@ -118,7 +126,7 @@ export const Home = ({customer}) => {
                     break;
             }
         } 
-        if (price == undefined || price == null) {
+        if (price == undefined || price == null || rooms == "") {
             newPrice = "undefined";
         } else newPrice = price;
 
@@ -129,13 +137,14 @@ export const Home = ({customer}) => {
             "rating": newRating,
             "city": newCity,
             "hotelChain": newHotelChain,
-            "price": newPrice
+            "price": newPrice,
+            "rooms": newRooms,
         }
         return data;
     }
     //Filter button handler, get request to api which sends back room information, which is filtered then saved under 'data'
     const handleClick = () => {
-        let data = compileData(checkInValue, checkOutValue, capacity, rating, city, hotelChain, price);
+        let data = compileData(checkInValue, checkOutValue, capacity, rating, city, hotelChain, price, rooms);
         if (data.checkOut != "undefined") {
             let url = new URL('http://localhost:4000/Hotels')
             Object.keys(data).forEach(key => url.searchParams.append(key, data[key as keyof typeof data]))
@@ -144,6 +153,7 @@ export const Home = ({customer}) => {
                     return response.json();
                 })
                 .then((data: Room[]) => {
+                    setQueried(true);
                     data.map((room) => {
                         room.hotelName = getHotelName(room.hotelid);
                         room.fullAddress = room.address;
@@ -161,13 +171,13 @@ export const Home = ({customer}) => {
     }
     return (
         <>
-            <Container maxWidth="lg" className="mt-16">
+            <Container maxWidth="xl" className="mt-16">
                 <Grid
                     container
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
-                    className="bg-slate-50 shadow-lg rounded-[3rem] pt-4 pb-4 max-w-3xl mx-auto"
+                    className="bg-slate-50 shadow-lg rounded-[3rem] pt-4 pb-4 max-w-4xl mx-auto"
                 >
                     <Grid
                         container
@@ -250,6 +260,7 @@ export const Home = ({customer}) => {
                                         label="capacity"
                                         onChange={handleCapacityChange}
                                     >
+                                        <MenuItem onClick={()=>{setCapacity(0)}}><div className="text-[color:#EFF4FB]">Reset</div></MenuItem>
                                         <MenuItem value={1}>1</MenuItem>
                                         <MenuItem value={2}>2</MenuItem>
                                         <MenuItem value={3}>3</MenuItem>
@@ -272,6 +283,7 @@ export const Home = ({customer}) => {
                                         label="capacity"
                                         onChange={handleCityChange}
                                     >
+                                        <MenuItem onClick={()=>{setCity("")}}><div className="text-[color:#EFF4FB]">Reset</div></MenuItem>
                                         {cities.map((city) => (
                                             <MenuItem value={city}>
                                                 {city}
@@ -294,6 +306,7 @@ export const Home = ({customer}) => {
                                         label="capacity"
                                         onChange={handleHotelChainChange}
                                     >
+                                        <MenuItem onClick={()=>{setHotelChain("")}}><div className="text-[color:#EFF4FB]">Reset</div></MenuItem>
                                         {hotelChains.map((hotelChain) => (
                                             <MenuItem value={hotelChain}>
                                                 {hotelChain}
@@ -316,6 +329,7 @@ export const Home = ({customer}) => {
                                         label="rating"
                                         onChange={handleRatingChange}
                                     >
+                                        <MenuItem onClick={()=>{setRating(0)}}><div className="text-[color:#EFF4FB]">Reset</div></MenuItem>
                                         <MenuItem value={1}>1</MenuItem>
                                         <MenuItem value={2}>2</MenuItem>
                                         <MenuItem value={3}>3</MenuItem>
@@ -325,7 +339,7 @@ export const Home = ({customer}) => {
                                 </FormControl>
                             </Box>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-2 mx-3">
                             <TextField
                                 id="outlined-basic"
                                 label="Max $"
@@ -338,17 +352,30 @@ export const Home = ({customer}) => {
                                 }}
                             />
                         </div>
+                        <div className="mt-2 mx-3">
+                            <TextField
+                                id="outlined-basic"
+                                label="Rooms"
+                                variant="outlined"
+                                className="w-20"
+                                onChange={handleRoomsChange}
+                                type="number"
+                                InputProps={{
+                                    inputProps: { min: 0 },
+                                }}
+                            />
+                        </div>
                     </Grid>
                 </Grid>
             </Container>
-            <Container maxWidth="lg" className="mt-10">
+            <Container maxWidth="xl" className="mt-10">
                 <Grid
                     container
                     direction={"row"}
                     justifyContent="space-evenly"
                     alignItems="stretch"
                 >
-                    {
+                    { data &&
                         data.map(room => (
                             <HotelCard 
                                 extendable = {room.extendable}
@@ -369,6 +396,11 @@ export const Home = ({customer}) => {
                                 customerid={customer?.customerid}
                             />
                         ))
+                    }
+                    { 
+                    queried && data &&data.length == 0
+                    &&
+                    <div>No hotel rooms were found for this combination of parameters</div>
                     }
                     </Grid>                
             </Container>

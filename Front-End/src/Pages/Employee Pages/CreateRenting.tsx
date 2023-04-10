@@ -1,4 +1,11 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -8,38 +15,40 @@ import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 interface roomAndId {
-    roomnumber: string,
-    roomid: number
+    roomnumber: string;
+    roomid: number;
 }
-export const CreateRenting = ({employee}) => {
+export const CreateRenting = ({ employee }) => {
     const [rooms, setRooms] = useState<roomAndId[]>();
     const [room, setRoom] = useState<number>();
     const nav = useNavigate();
     const [checkOutValue, setCheckOutValue] = useState<Dayjs | null>();
     const ssnRef = useRef<HTMLInputElement>(null);
     const formChecker = (event: React.FormEvent<HTMLFormElement>) => {
-        if(ssnRef.current?.value.length != 9){
-            alert('Please input a 9 letter long SSN')
+        if (ssnRef.current?.value.length != 9) {
+            alert("Please input a 9 number long SSN");
         } else {
-            if(!room){
-                alert('Select a room number!')
+            if (!room) {
+                alert("Select a room number!");
             } else {
-                if(!checkOutValue){
-                    alert('Enter a checkout value!')
+                if (!checkOutValue) {
+                    alert("Enter a checkout value!");
                 } else {
                     return true;
                 }
             }
         }
         return false;
-    }
+    };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if(formChecker(event)){
+        if (formChecker(event)) {
             let data = {
                 ssn: ssnRef.current?.value,
                 checkOutValue: checkOutValue?.format("YYYY-MM-DD"),
-                roomid: rooms?.filter((roomf)=> parseInt(roomf.roomnumber) == room)[0].roomid,
+                roomid: rooms?.filter(
+                    (roomf) => parseInt(roomf.roomnumber) == room
+                )[0].roomid,
                 employeeid: employee.employeeid,
                 checkInValue: dayjs().format("YYYY-MM-DD"),
                 hotelid: employee.hotelid,
@@ -49,19 +58,16 @@ export const CreateRenting = ({employee}) => {
             axios
                 .post("http://localhost:4000/CreateRenting", data)
                 .then((response) => {
-                    alert('Renting created!'),
-                    nav('/Rentings')
+                    alert("Renting created!"), nav("/Rentings");
                 })
                 .catch((error) => {
                     alert(error.response.data);
                 });
         }
-        console.log('hamidddddd', ssnRef.current?.value, room, checkOutValue?.format("YYYY-MM-DD"));
-
-    }
+    };
     const handleRoomChange = (event: SelectChangeEvent) => {
         setRoom(event.target.value as unknown as number);
-    }
+    };
     const getAvailableRooms = () => {
         let url = new URL("http://localhost:4000/AvailableRooms");
         url.searchParams.append("hotelid", employee.hotelid);
@@ -72,7 +78,7 @@ export const CreateRenting = ({employee}) => {
                 
                 setRooms(data);
             });
-    }
+    };  
     useEffect(() => {
         getAvailableRooms();
     }, []);
@@ -85,7 +91,11 @@ export const CreateRenting = ({employee}) => {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                                 <u>Create a renting</u>
                             </h1>
-                            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off">
+                            <form
+                                className="space-y-4 md:space-y-6"
+                                onSubmit={handleSubmit}
+                                autoComplete="off"
+                            >
                                 <div>
                                     <label
                                         htmlFor="ssn"
@@ -103,7 +113,6 @@ export const CreateRenting = ({employee}) => {
                                     />
                                 </div>
                                 <div className="mt-2">
-                                    
                                     <Box>
                                         <FormControl fullWidth>
                                             <InputLabel id="demo-simple-select-label">
@@ -116,25 +125,38 @@ export const CreateRenting = ({employee}) => {
                                                 label="capacity"
                                                 onChange={handleRoomChange}
                                             >
-                                                {rooms && rooms.map((room) => (
-                                                    <MenuItem value={room.roomnumber}>
-                                                        {room.roomnumber}
-                                                    </MenuItem>
-                                                ))}
+                                                {rooms &&
+                                                    rooms.map((room) => (
+                                                        <MenuItem
+                                                            value={
+                                                                room.roomnumber
+                                                            }
+                                                        >
+                                                            {room.roomnumber}
+                                                        </MenuItem>
+                                                    ))}
                                             </Select>
                                         </FormControl>
                                     </Box>
                                 </div>
                                 <div className="TimePickers">
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <LocalizationProvider
+                                        dateAdapter={AdapterDayjs}
+                                    >
                                         <DemoContainer
-                                            components={["DatePicker", "DatePicker"]}
+                                            components={[
+                                                "DatePicker",
+                                                "DatePicker",
+                                            ]}
                                         >
                                             <DatePicker
                                                 label="Check-out"
                                                 disablePast={true}
-                                                minDate={dayjs().add(1, 'day')}
-                                                maxDate={dayjs().add(2, 'month')}
+                                                minDate={dayjs().add(1, "day")}
+                                                maxDate={dayjs().add(
+                                                    2,
+                                                    "month"
+                                                )}
                                                 value={checkOutValue}
                                                 onChange={(newValue) =>
                                                     setCheckOutValue(newValue)
@@ -143,10 +165,54 @@ export const CreateRenting = ({employee}) => {
                                         </DemoContainer>
                                     </LocalizationProvider>
                                 </div>
-
-
+                                <div>
+                                    <label
+                                        htmlFor="creditcardnumber"
+                                        className="ml-1 block mb-2 text-sm text-gray-900 dark:text-white"
+                                    >
+                                        Credit card number
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="creditcardnumber"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="xxxx xxxx xxxx xxxx"
+                                        required={true}
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        htmlFor="number"
+                                        className="ml-1 block mb-2 text-sm text-gray-900 dark:text-white"
+                                    >
+                                        Numbers at the back of the card
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="Numbers at back"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="xxx"
+                                        required={true}
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label
+                                        htmlFor="numb"
+                                        className="ml-1 block mb-2 text-sm text-gray-900 dark:text-white"
+                                    >
+                                        Expiry date
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="expiry"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="12/24"
+                                        required={true}
+                                    />
+                                </div>
                                 <div className="mt-6">
-                                    <button  className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                                    <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
                                         Register
                                     </button>
                                 </div>
@@ -158,3 +224,4 @@ export const CreateRenting = ({employee}) => {
         </>
     );
 };
+

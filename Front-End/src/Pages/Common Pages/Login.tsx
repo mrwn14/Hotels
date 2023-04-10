@@ -42,7 +42,8 @@ export const Login = ({customer, setCustomer, employee, setEmployee}) => {
                             hotelid: tempResponse.hotelid,
                             fullname: tempResponse.fullname,
                             address: tempResponse.address,
-                            ssn: tempResponse.ssn
+                            ssn: tempResponse.ssn,
+                            ismanager: tempResponse.ismanager
                         } as Employee
                     );
                 }

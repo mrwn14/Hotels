@@ -1,6 +1,13 @@
 import { Navbar, Button } from "flowbite-react";
 import { Link } from "react-router-dom";
-export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
+import { Customer, Employee } from "../DTO/dtos";
+type Props = {
+    customer: Customer | undefined;
+    employee: Employee | undefined;
+    setCustomer,
+    setEmployee,
+};
+export const NavBar = ({customer, setCustomer, employee, setEmployee}: Props) => {
     const handleButton = () => {
         if (customer) {
             setCustomer(undefined)
@@ -44,8 +51,12 @@ export const NavBar = ({customer, setCustomer, employee, setEmployee}) => {
                         <Link to={"/"}><Navbar.Link href=""> Bookings </Navbar.Link></Link>
                         <Link to={"/Rentings"}><Navbar.Link href=""> Rentings </Navbar.Link></Link>
                         <Link to={"/EmployeeUpdate"}><Navbar.Link href=""> Update Account </Navbar.Link></Link>
-                        <Link to={"/HotelUpdate"}><Navbar.Link href=""> Update Hotel</Navbar.Link></Link>
-                        <Link to={"/RoomUpdate"}><Navbar.Link href=""> Update Room</Navbar.Link></Link>
+                        { employee.ismanager && 
+                            <>
+                            <Link to={"/HotelUpdate"}><Navbar.Link href=""> Update Hotel</Navbar.Link></Link>
+                            <Link to={"/RoomUpdate"}><Navbar.Link href=""> Update Room</Navbar.Link></Link>
+                            </>
+                        }
                     </>
                 }
             </Navbar.Collapse>

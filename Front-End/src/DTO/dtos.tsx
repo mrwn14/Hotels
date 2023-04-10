@@ -33,7 +33,8 @@ export interface Employee {
   hotelid: string,
   fullname: string;
   address: string;
-  ssn: string
+  ssn: string;
+  ismanager: boolean;
 }
 export interface Booking {
   bookingid: string,

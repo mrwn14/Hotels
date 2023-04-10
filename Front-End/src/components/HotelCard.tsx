@@ -23,13 +23,16 @@ export const HotelCard = ({
         let render = variable ? "✔️" : "❌";
         return render;
     };
-    
+    //return image fromm hotelImages table
+    const getImageIndex = (): string => {
+        return hotelImages[roomid%7]
+    }
     return (
         <div className="max-w-[18rem] mx-3 my-3 bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
             <div className="">
                 <img
                     className="rounded-t-lg max-w-[100%] block"
-                    src={hotelImages[Math.floor(Math.random() * 8)]}
+                    src={getImageIndex()}
                     alt=""
                 />
             </div>

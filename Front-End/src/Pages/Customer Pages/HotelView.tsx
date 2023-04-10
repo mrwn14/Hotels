@@ -43,7 +43,7 @@ export const HotelView = ({customer}) => {
                 .post("http://localhost:4000/Book", data)
                 .then((response) => {
                     if(response.status == 200){
-                        alert('Thank you! your booking has been confirmed');
+                        alert("Thank you for booking with us!")
                         nav('/')
                     }
 

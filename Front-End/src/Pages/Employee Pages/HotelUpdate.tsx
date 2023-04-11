@@ -66,7 +66,7 @@ export const HotelUpdate = ({employee}: Props) => {
                 alert(error.response.data);
             });
     }
-
+   
     useEffect(() => {
         getHotel();
     }, [])

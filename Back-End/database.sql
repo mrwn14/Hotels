@@ -87,7 +87,7 @@ CREATE TABLE Renting (
                          CheckoutDate DATE NOT NULL  check ( CheckoutDate > CheckinDate ),
                          PRIMARY KEY(RentingID),
                          FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
-                         FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
+                         FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE RESTRICT ,
                          FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID) ON DELETE CASCADE
 );
 
@@ -115,7 +115,7 @@ CREATE TABLE Booking (
                          CheckoutDate Date NOT NULL  check ( CheckoutDate > CheckinDate ),
                          PRIMARY KEY (BookingID),
                          FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE,
-                         FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
+                         FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE RESTRICT ,
                          FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID) ON DELETE CASCADE
 );
 CREATE TABLE Cities (
@@ -162,22 +162,22 @@ EXECUTE FUNCTION increment_num_of_hotels();
 
 --      Views Creation       --
 CREATE VIEW Available_Rooms AS
-    Select subView2.City as id, count(*) as numRoomsAvailable from
-        (Select * from
-            ((room natural join hotel) left join Cities on Address LIKE concat('%',Cities.City,'%')) as subView1
-         where subView1.RoomID not in (select booking.roomid from booking)
-           AND subView1.RoomID not in (select booking.roomid from booking)
-        )
-            as subView2 group by subView2.City;
+Select subView2.City as id, count(*) as numRoomsAvailable from
+    (Select * from
+        ((room natural join hotel) left join Cities on Address LIKE concat('%',Cities.City,'%')) as subView1
+     where subView1.RoomID not in (select booking.roomid from booking)
+       AND subView1.RoomID not in (select renting.roomid from renting)
+    )
+        as subView2 group by subView2.City;
 
 CREATE VIEW Hotels_Capacity AS
-    Select subView2.Name, subView2.address as id, sum(subView2.Capacity) as capacity from
-        (SELECT * from
-            ((room natural join hotel) left join hotelchain on Hotel.ChainID = HotelChain.ChainID) as subview1
-         where subView1.RoomID not in (select booking.roomid from booking)
-           AND subView1.RoomID not in (select booking.roomid from booking)
-        )
-            as subView2 group by subView2.address, subView2.name ;
+Select subView2.Name, subView2.address as id, sum(subView2.Capacity) as capacity from
+    (SELECT * from
+        ((room natural join hotel) left join hotelchain on Hotel.ChainID = HotelChain.ChainID) as subview1
+     where subView1.RoomID not in (select booking.roomid from booking)
+       AND subView1.RoomID not in (select renting.roomid from renting)
+    )
+        as subView2 group by subView2.address, subView2.name ;
 --      Views Creation       --
 
 
@@ -670,3 +670,5 @@ INSERT INTO employeeposition VALUES
 -- DROP TABLE Booking, Archive, Renting, Employee, Customer, Positions, Room, Hotel, HotelChain, Cities, EmployeePosition;
 -- DROP FUNCTION increment_num_of_hotels();
 -- DROP FUNCTION increment_num_of_rooms();
+
+-- DELETE FROM employeeposition WHERE PositionID = 5 AND employeeid = 1;

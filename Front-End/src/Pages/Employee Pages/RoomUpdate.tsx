@@ -50,8 +50,7 @@ export const RoomUpdate = ({employee}: Props) => {
             });
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         console.log(seaView);
         
         let capacityValue = (newCapacity? newCapacity : capacity);
@@ -107,7 +106,26 @@ export const RoomUpdate = ({employee}: Props) => {
     useEffect(() => {
         getRooms();
     }, []);
+    const handleDelete = () => {
+        let url = new URL(
+            "http://localhost:4000/Room/" + roomInfo?.roomid
+        );
+        fetch(url, { method: "DELETE" })
+            .then((response) => {
+                if (response.status === 200) {
+                    alert("Room deleted successfully");
+                    nav("/");
+                }
+                else if(response.status === 404) {
+                    alert("Couldn't delete, room is in a booking or renting");
 
+                }
+
+            })
+            .catch((error) => {
+                alert(error);
+            });
+};
     return (
         <>
             <section className="bg-gray-50 dark:bg-gray-900">
@@ -117,10 +135,8 @@ export const RoomUpdate = ({employee}: Props) => {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                                 <u>Update Room info</u>
                             </h1>
-                            <form
+                            <div
                                 className="space-y-4 md:space-y-6"
-                                onSubmit={handleSubmit}
-                                autoComplete="off"
                             >
                               <div className="mt-2">
                                     
@@ -278,12 +294,22 @@ export const RoomUpdate = ({employee}: Props) => {
                                 </div>
                                 
                                 <div className="mt-6">
-                                    <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                                    <button 
+                                    onClick={()=> handleSubmit()}
+                                    className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-[#2C55D3] rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
                                         Update
                                     </button>
                                 </div>
+                                <div className="mt-6">
+                                    <button
+                                        className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700"
+                                        onClick={handleDelete}
+                                    >
+                                        DELETE ACCOUNT
+                                    </button>
+                                </div>
                                 </> }
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>

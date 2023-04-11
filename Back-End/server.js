@@ -37,11 +37,13 @@ app.get('/',(req, res) => {
 // Get requests
 app.get('/View1', async (req, res) =>{
     query = "Select * from Available_Rooms;"
+    console.log(query);
     const send = await pool.query(query);
     res.json(send.rows);
 })
 app.get('/View2', async (req, res) =>{
     query = "Select * from Hotels_Capacity;"
+    console.log(query);
     const send = await pool.query(query);
     res.json(send.rows);
 })
@@ -51,9 +53,10 @@ app.get('/EmployeeBookings',async (req, res) => {
     query = "SELECT * FROM booking WHERE hotelid = '" + hotelId +"'";
     console.log(query);
     const send = await pool.query(query + ";");
-    console.log(res.rows);
     res.json(send.rows);
 })
+
+// index of room by hotel id
 app.get('/AvailableRooms',async (req, res) => {
     params = req.query;
     let hotelId = params['hotelid'];
@@ -62,7 +65,6 @@ app.get('/AvailableRooms',async (req, res) => {
                                 " AND room.roomid NOT IN (Select renting.roomid from renting where renting.hotelid = '" + hotelId +"')"
     console.log(query);
     const send = await pool.query(query + ";");
-    console.log(res.rows);
     res.json(send.rows);
 })
 app.get('/EmployeeRentings',async (req, res) => {
@@ -71,7 +73,6 @@ app.get('/EmployeeRentings',async (req, res) => {
     query = "SELECT * FROM renting WHERE hotelid = '" + hotelId +"'";
     console.log(query);
     const send = await pool.query(query + ";");
-    console.log(send.rows);
     res.json(send.rows);
 })
 
@@ -80,7 +81,9 @@ app.get('/Hotels', async (req, res) => {
         query = "SELECT roomid, room.hotelid, roomnumber, price, amenities, capacity, seaview, mountainview, extendable, damages, Address, Category FROM room, hotel WHERE room.HotelID = hotel.HotelID AND "
         params = req.query;
         query += "roomID NOT IN (SELECT room.roomID FROM room LEFT JOIN booking ON room.RoomID = booking.RoomID WHERE (\'"+ params["checkIn"] +"\' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" 
-        + (params["checkOut"]!="undefined"? " AND '"+ params["checkOut"] + "' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" : ")")
+        + (params["checkOut"]!="undefined"? " OR '"+ params["checkOut"] + "' BETWEEN booking.CheckinDate AND booking.CheckoutDate)" : ")")
+        + " AND roomID NOT IN (SELECT room.roomID FROM room LEFT JOIN renting ON room.RoomID = renting.RoomID WHERE (\'"+ params["checkIn"] +"\' BETWEEN renting.CheckinDate AND renting.CheckoutDate)" 
+        + (params["checkOut"]!="undefined"? " OR '"+ params["checkOut"] + "' BETWEEN renting.CheckinDate AND renting.CheckoutDate)" : ")")
         + (params["capacity"]!="undefined"? " AND room.capacity = "+params["capacity"] : "")
         + (params["rating"]!="undefined"? " AND room.roomid in (SELECT roomid FROM room NATURAL JOIN hotel where hotel.category = "+params["rating"]+")":"")
         + (params["price"]!="undefined"? " AND room.price <= " + params["price"] : "")
@@ -88,13 +91,15 @@ app.get('/Hotels', async (req, res) => {
         + (params["hotelChain"]!="undefined"? " AND room.hotelID LIKE '" + params["hotelChain"] +"%'": "")
         + (params["rooms"]!= "undefined"? " AND room.hotelID IN (SELECT hotel.hotelid FROM hotel WHERE hotel.NumOfRooms = "+params["rooms"] +")":"" )
         const send = await pool.query(query +";");
-        console.log(send.rows);
+        console.log(query);
         res.json(send.rows);
     }
     catch (err) {
         console.log(err);
     }
 })
+
+// index for hotel by hotel id
 app.get('/Hotel/:id', async (req, res) => {
     try {
         query = "SELECT * FROM hotel WHERE hotelID = '"+req.params.id +"'";
@@ -106,6 +111,8 @@ app.get('/Hotel/:id', async (req, res) => {
         console.log(err);
     }
 })
+
+// index of room by hotel id
 app.get('/Room/:id', async (req, res) => {
     try {
         query = "SELECT * FROM room WHERE hotelID = '"+req.params.id +"'";
@@ -135,12 +142,10 @@ app.get('/HotelBookings/:customerid', async (req, res) => {
     query = "SELECT * FROM booking WHERE customerid = '" + req.params.customerid +"'";
     console.log(query);
     send = await pool.query(query + ";");
-    console.log(res.rows);
     if (send.rows.length == 0) {
         res.status(404);
     }
     else if (send.rows.length > 0 ) {
-        console.log(send.rows);
         res.status(200).json(send.rows);
     }
 })
@@ -156,6 +161,7 @@ app.post('/Login', async (req, res) => {
     let CustomerQuery = "SELECT * FROM customer WHERE customer.email = '"+email+"' AND customer.password = '"+password+"'"
     let query = ""
     employee? query = employeeQuery : query = CustomerQuery
+    console.log(query);
     const queryResult = await pool.query(query +";");
     //checking if the user is the table, if not then sending status 404, if user in table send status 200
     if(queryResult.rows.length == 0){
@@ -165,7 +171,6 @@ app.post('/Login', async (req, res) => {
         res.status(200).json(queryResult.rows);
     }
     else if (queryResult.rows.length == 1 && employee){
-        console.log(queryResult.rows)
         res.status(201).json(queryResult.rows);
     }
 })
@@ -230,7 +235,6 @@ app.post('/CreateRenting', async (req, res) => {
     else {
         let query, customerid;
         customerid = queryResult1.rows[0].customerid;
-        console.log('customer id is ', queryResult1.rows);
         query = "INSERT INTO Renting VALUES (DEFAULT,'"+hotelid+"','"+roomid+"','"+customerid+"','"+checkInValue+"','"+checkOutValue+"');"
         console.log(query);
         const queryResult = await pool.query(query);
@@ -272,9 +276,11 @@ app.post('/Book', async (req, res) => {
 app.post('/HotelBookings/:id', async (req, res) => {
     params = req.body
     let query1 = "INSERT INTO renting VALUES (DEFAULT, '"+params["hotelid"]+"','"+params["roomid"]+"','"+params["customerid"]+"','"+params["checkindate"]+"','"+params["checkoutdate"]+"') RETURNING *;"
+    console.log(query1);
     const send1 = await pool.query(query1);
     if (send1.rows) {
         let query2 = "DELETE FROM booking WHERE bookingID = '"+ params["bookingid"] + "'"
+        console.log(query2);
         const send2 = await pool.query(query2)
         res.sendStatus(200);
     }
@@ -310,8 +316,23 @@ app.delete('/HotelRentings/', async (req, res) => {
 app.delete('/Customer/:id', async (req, res) => {
     params = req.params;
     let query = "DELETE FROM customer WHERE customerid = '"+ params["id"] + "'"
-    const send = await pool.query(query2)
+    const send = await pool.query(query)
+    console.log(query);
     res.sendStatus(200);
+    
+})
+
+app.delete('/Room/:roomid', async (req, res) => {
+    params = req.params;
+    let query = "DELETE FROM room WHERE roomid = '"+ params["roomid"] + "'"
+    console.log(query);
+    try{
+        const send = await pool.query(query)
+        res.sendStatus(200);
+
+    } catch(err){
+        res.status(404).json("Couldn't delete, room is in a booking or renting")
+    } 
     
 })
 // Patch requests

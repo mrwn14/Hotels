@@ -17,7 +17,7 @@ CREATE TABLE HotelChain (
 CREATE TABLE Hotel (
                        HotelID CHAR(5) NOT NULL UNIQUE,
                        ChainID CHAR(5) NOT NULL,
-                       Category INTEGER check ( Category<=5 ) NOT NULL,
+                       Category INTEGER check ( Category>=1 and Category<=5 ) NOT NULL,
                        NumOfRooms NUMERIC check (NumOfRooms >= 0)  NOT NULL,
                        Address VARCHAR(50) NOT NULL,
                        ContactEmail VARCHAR(40) NOT NULL,
@@ -41,11 +41,6 @@ CREATE TABLE Room (
                       FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE
 );
 
-CREATE TABLE Positions (
-                           PositionID SERIAL NOT NULL UNIQUE,
-                           PositionName VARCHAR(40) NOT NULL,
-                           PRIMARY KEY (PositionID)
-);
 
 CREATE TABLE Customer (
                           CustomerID SERIAL NOT NULL UNIQUE,
@@ -56,6 +51,12 @@ CREATE TABLE Customer (
                           SSN CHAR(9) NOT NULL  CHECK( length(SSN)=9 ) UNIQUE,
                           DateOfRegistration DATE NOT NULL,
                           PRIMARY KEY(CustomerID)
+);
+
+CREATE TABLE Positions (
+                           PositionID SERIAL NOT NULL UNIQUE,
+                           PositionName VARCHAR(40) NOT NULL,
+                           PRIMARY KEY (PositionID)
 );
 
 CREATE TABLE Employee (

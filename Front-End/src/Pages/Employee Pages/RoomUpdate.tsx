@@ -305,7 +305,7 @@ export const RoomUpdate = ({employee}: Props) => {
                                         className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700"
                                         onClick={handleDelete}
                                     >
-                                        DELETE ACCOUNT
+                                        DELETE ROOM
                                     </button>
                                 </div>
                                 </> }

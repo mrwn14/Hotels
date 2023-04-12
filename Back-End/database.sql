@@ -32,7 +32,7 @@ CREATE TABLE Room (
                       RoomNumber NUMERIC(20) NOT NULL,
                       Price NUMERIC(20) NOT NULL check (Price >= 0)  NOT NULL,
                       Amenities VARCHAR(100) NOT NULL,
-                      Capacity NUMERIC(20) NOT NULL check (Price > 0)  NOT NULL,
+                      Capacity NUMERIC(20) NOT NULL check (capacity > 0)  NOT NULL,
                       SeaView BOOLEAN NOT NULL,
                       MountainView BOOLEAN NOT NULL,
                       Extendable BOOLEAN NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE Customer (
                           Password VARCHAR(40) NOT NULL,
                           FullName VARCHAR(40) NOT NULL,
                           Address VARCHAR(50) NOT NULL,
-                          SSN CHAR(9) NOT NULL  CHECK( length(SSN)=9 ) UNIQUE,
+                          SSN INT NOT NULL  CHECK( SSN BETWEEN 100000000 AND 999999999 ) UNIQUE,
                           DateOfRegistration DATE NOT NULL,
                           PRIMARY KEY(CustomerID)
 );
@@ -66,7 +66,7 @@ CREATE TABLE Employee (
                           HotelID CHAR(5) NOT NULL,
                           FullName VARCHAR(40) NOT NULL,
                           Address VARCHAR(50) NOT NULL,
-                          SSN CHAR(9) NOT NULL CHECK( length(SSN)=9 ) ,
+                          SSN INT NOT NULL CHECK( SSN BETWEEN 100000000 AND 999999999 ) UNIQUE,
                           PRIMARY KEY (EmployeeID),
                           FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID) ON DELETE CASCADE
 
@@ -543,17 +543,17 @@ INSERT INTO positions VALUES
 
 
 INSERT INTO employee VALUES
-                         (DEFAULT, 'employee1@admin.com', '12345', '11001', 'Asad Ahmed', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee2@admin.com', '12345', '11002', 'Fatima Khan', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee3@admin.com', '12345', '11003', 'Youssef Belhaj', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee4@admin.com', '12345', '11004', 'Ivan Petrov', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee5@admin.com', '12345', '11005', 'Elena Ivanova', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee6@admin.com', '12345', '11006', 'Pedro Hernandez', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee7@admin.com', '12345', '11007', 'Yan Li', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee8@admin.com', '12345', '11008', 'Ying Yang', '143 Jonathon St', 563349846),
-                         (DEFAULT, 'employee9@admin.com', '12345', '12001', 'Mehreen Hassan', '143 Jonathon St', 563349846),
+                         (DEFAULT, 'employee1@admin.com', '12345', '11001', 'Asad Ahmed', '143 Jonathon St', 123349846),
+                         (DEFAULT, 'employee2@admin.com', '12345', '11002', 'Fatima Khan', '143 Jonathon St', 562349846),
+                         (DEFAULT, 'employee3@admin.com', '12345', '11003', 'Youssef Belhaj', '143 Jonathon St', 263349846),
+                         (DEFAULT, 'employee4@admin.com', '12345', '11004', 'Ivan Petrov', '143 Jonathon St', 563349246),
+                         (DEFAULT, 'employee5@admin.com', '12345', '11005', 'Elena Ivanova', '143 Jonathon St', 566349846),
+                         (DEFAULT, 'employee6@admin.com', '12345', '11006', 'Pedro Hernandez', '143 Jonathon St', 563349646),
+                         (DEFAULT, 'employee7@admin.com', '12345', '11007', 'Yan Li', '143 Jonathon St', 563369846),
+                         (DEFAULT, 'employee8@admin.com', '12345', '11008', 'Ying Yang', '143 Jonathon St', 663349846),
+                         (DEFAULT, 'employee9@admin.com', '12345', '12001', 'Mehreen Hassan', '143 Jonathon St', 563348846),
                          (DEFAULT, 'employee10@admin.com', '12345', '12002', 'Rabia Malik', '143 Jonathon St', 163349846),
-                         (DEFAULT, 'employee11@admin.com', '12345', '12003', 'Hicham Benali', '143 Jonathon St', 263349846),
+                         (DEFAULT, 'employee11@admin.com', '12345', '12003', 'Hicham Benali', '143 Jonathon St', 263349847),
                          (DEFAULT, 'employee12@admin.com', '12345', '12004', 'Svetlana Kuznetsova', '143 Jonathon St', 363349846),
                          (DEFAULT, 'employee13@admin.com', '12345', '12005', 'Carlos Martinez', '143 Jonathon St', 463349846),
                          (DEFAULT, 'employee14@admin.com', '12345', '12006', 'Wei Zhang', '143 Jonathon St', 763349846),
@@ -565,7 +565,7 @@ INSERT INTO employee VALUES
                          (DEFAULT, 'employee20@admin.com', '12345', '13004', 'Luis Hernandez', '143 Jonathon St', 513349846),
                          (DEFAULT, 'employee21@admin.com', '12345', '13005', 'Nova Stardust', '143 Jonathon St', 523349846),
                          (DEFAULT, 'employee22@admin.com', '12345', '13006', 'Xander Phoenix', '143 Jonathon St', 561349846),
-                         (DEFAULT, 'employee23@admin.com', '12345', '13007', 'Luna Eclipse', '143 Jonathon St', 562349846),
+                         (DEFAULT, 'employee23@admin.com', '12345', '13007', 'Luna Eclipse', '143 Jonathon St', 262349846),
                          (DEFAULT, 'employee24@admin.com', '12345', '13008', 'Jaxon Thunder', '143 Jonathon St', 563349846),
                          (DEFAULT, 'employee25@admin.com', '12345', '14001', 'Aria Sky', '143 Jonathon St', 564349846),
                          (DEFAULT, 'employee26@admin.com', '12345', '14002', 'Orion Blaze', '143 Jonathon St', 565349846),
